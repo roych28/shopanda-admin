@@ -4,6 +4,8 @@ import '@uploadthing/react/styles.css';
 import type { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
 import { Inter } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 import { auth } from '@/auth';
 
@@ -20,8 +22,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+
+  const locale = await getLocale();
+  console.log('RootLayout locale', locale);
+
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale} dir={locale === 'he' ? 'rtl' : 'ltr'}>
       <body
         className={`${inter.className} overflow-hidden `}
         suppressHydrationWarning={true}
