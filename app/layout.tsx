@@ -36,8 +36,10 @@ export default async function RootLayout({
       >
         <NextTopLoader showSpinner={false} />
         <Providers session={session}>
+        <NextIntlClientProvider messages={messages}>
           <Toaster />
           {children}
+        </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

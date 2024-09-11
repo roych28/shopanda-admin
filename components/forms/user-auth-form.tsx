@@ -1,4 +1,5 @@
 'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -16,10 +17,15 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import GithubSignInButton from '../github-auth-button';
+import { useTranslations } from 'next-intl';
+
+const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 
 const formSchema = z.object({
-  email: z.string().email({ message: 'Enter a valid email address' })
+  email: z.string().email({ message: 'Enter a valid email address' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters' })
 });
+
 
 type UserFormValue = z.infer<typeof formSchema>;
 
@@ -27,20 +33,53 @@ export default function UserAuthForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, setLoading] = useState(false);
-  const defaultValues = {
-    email: 'demo@gmail.com'
-  };
+  const t = useTranslations(); 
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [errorMessage, setErrorMessage] = useState('');
+
+
+
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
-    defaultValues
   });
 
-  const onSubmit = async (data: UserFormValue) => {
-    signIn('credentials', {
-      email: data.email,
-      callbackUrl: callbackUrl ?? '/dashboard'
-    });
-  };
+  const onSubmit = async (e: React.FormEvent) => {
+   
+    if (!email || !password) {
+      setError('Please fill in all fields')
+    } else {
+      setError('')
+      console.log('Login attempted with:', { email, password })
+    }
+    try {
+        const response = await fetch(`${SERVER_API_BASE_URL}/api/pos/login`,{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+  
+        const data = await response.json();
+
+        if (!response.ok) {
+          setErrorMessage(data.responseMessage || 'Login failed');
+        } else {
+            console.log('Token:', data.token ,'role:', data.user.role);
+            if (data.user.role !== 'admin') {
+               
+                  return;
+              } 
+          
+          // You can store the token in localStorage or sessionStorage and redirect to another page
+          localStorage.setItem('authToken', data.token);
+        }
+      } catch (error) {
+        setErrorMessage('An error occurred. Please try again later.');
+      }
+  }
 
   return (
     <>
@@ -49,27 +88,45 @@ export default function UserAuthForm() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-2"
         >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="Enter your email..."
-                    disabled={loading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
+            <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('Email')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder={t('EnterEmail')}
+                        disabled={loading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            {/* שדה סיסמה */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('Password')}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder={t('EnterPassword')}
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           <Button disabled={loading} className="ml-auto w-full" type="submit">
-            Continue With Email
+            {t('Login')}
           </Button>
         </form>
       </Form>
@@ -83,7 +140,6 @@ export default function UserAuthForm() {
           </span>
         </div>
       </div>
-      <GithubSignInButton />
     </>
   );
 }
