@@ -5,5 +5,9 @@
   "Email": "אימייל",
   "Password": "סיסמה",
   "EnterEmail": "הכנס את כתובת האימייל שלך",
-  "EnterPassword": "הכנס את הסיסמה שלך"
+  "EnterPassword": "הכנס את הסיסמה שלך",
+  "Error":"שגיאה",
+  "loginFailed":"התחברות נכשלה",
+  "adminOnly":"גישה נדחתה אין הרשאה",
+  "Loading":"בטעינה"
 }

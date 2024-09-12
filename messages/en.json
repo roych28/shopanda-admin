@@ -5,5 +5,9 @@
   "Email": "Email",
   "Password": "Password",
   "EnterEmail": "Enter your email",
-  "EnterPassword": "Enter your password"
+  "EnterPassword": "Enter your password",
+  "Error":"Error",
+  "loginFailed":"login Failed",
+  "adminOnly":"Admin Only",
+  "Loading":"Loading"
 }
