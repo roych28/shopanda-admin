@@ -80,15 +80,23 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
-   
-      localStorage.getItem('authToken');
+      setLoading(true);
+      let dataItem = localStorage.getItem('data');
+      console.log(dataItem);
+      if(dataItem) {
+        dataItem = JSON.parse(dataItem);
+        setAuthData(dataItem.user, dataItem.token);
+      } else {
+        console.log('no user saved in localstorage');
+      }
+      
       
   }, []);
 
   const setAuthData = (posUser: any, token: any) => {
     setPosUser(posUser);
     setAccessToken(token);
-    setLoading(true);
+    setLoading(false);
 
   }
 

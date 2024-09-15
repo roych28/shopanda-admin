@@ -45,7 +45,7 @@ export default function AuthenticationPage() {
         console.log("token:",data.token, "user:", data.user)
 
         // If everything is fine, store token and redirect
-        localStorage.setItem('data', data);
+        localStorage.setItem('data', JSON.stringify(data));
         router.push('/dashboard'); // Redirect to the dashboard
       } catch (error) {
         setErrorMessage(t('errorOccurred')); // Handle network or server errors
