@@ -1,3 +1,5 @@
+'use client'
+
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
 import { PieGraph } from '@/components/charts/pie-graph';
@@ -13,18 +15,19 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-//import { useDataContext } from '@/lib/DataProvider';
+import { useDataContext } from '@/lib/DataProvider';
 
 
 export default function page() {
-  //const { posUser, loading, setAuthData } = useDataContext();
+  const { posUser, loading, setAuthData } = useDataContext();
 
+  console.log(posUser, loading)
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
           <div className="text-2xl font-bold tracking-tight">
-            {/*posUser?.username*/}
+            {posUser?.username}
           </div>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />

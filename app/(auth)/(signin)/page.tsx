@@ -15,7 +15,7 @@ export default function AuthenticationPage() {
     const t = useTranslations();
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
-    //const { posUser, loading, setAuthData } = useDataContext();
+    const { setAuthData } = useDataContext();
 
 
     const handleLogin = async (email: string, password: string) => {
@@ -41,11 +41,11 @@ export default function AuthenticationPage() {
           return;
         }
 
-        //setAuthData(data.user, data.token);
+        setAuthData(data.user, data.token);
         console.log("token:",data.token, "user:", data.user)
 
         // If everything is fine, store token and redirect
-        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('data', data);
         router.push('/dashboard'); // Redirect to the dashboard
       } catch (error) {
         setErrorMessage(t('errorOccurred')); // Handle network or server errors

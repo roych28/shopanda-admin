@@ -81,8 +81,8 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
    
-    //  localStorage.getItem('authToken');
-    
+      localStorage.getItem('authToken');
+      
   }, []);
 
   const setAuthData = (posUser: any, token: any) => {
