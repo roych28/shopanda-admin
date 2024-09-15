@@ -6,7 +6,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation'; 
-import { useState } from 'react';
+import { useState , useContext} from 'react';
+import { useDataContext } from '@/lib/DataProvider';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 
@@ -14,6 +15,8 @@ export default function AuthenticationPage() {
     const t = useTranslations();
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
+    //const { posUser, loading, setAuthData } = useDataContext();
+
 
     const handleLogin = async (email: string, password: string) => {
       try {
@@ -37,6 +40,9 @@ export default function AuthenticationPage() {
           setErrorMessage(t('adminOnly'));
           return;
         }
+
+        //setAuthData(data.user, data.token);
+        console.log("token:",data.token, "user:", data.user)
 
         // If everything is fine, store token and redirect
         localStorage.setItem('authToken', data.token);
@@ -74,7 +80,7 @@ export default function AuthenticationPage() {
           </svg>
           Logo
         </div>
-        <div className="relative z-20 mt-auto">
+        {/* <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;This library has saved me countless hours of work and
@@ -83,7 +89,7 @@ export default function AuthenticationPage() {
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
-        </div>
+        </div> */}
       </div>
       <div className="flex h-full items-center p-4 lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">

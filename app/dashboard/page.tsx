@@ -13,15 +13,19 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+//import { useDataContext } from '@/lib/DataProvider';
+
 
 export default function page() {
+  //const { posUser, loading, setAuthData } = useDataContext();
+
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
-          </h2>
+          <div className="text-2xl font-bold tracking-tight">
+            {/*posUser?.username*/}
+          </div>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
             <Button>Download</Button>
