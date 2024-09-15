@@ -1,5 +1,5 @@
 'use client'
-
+import { useEffect } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
 import { PieGraph } from '@/components/charts/pie-graph';
@@ -17,10 +17,44 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 
+const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
+
+const getCustomerReport = async () => {
+  try {
+    const response = await fetch(
+      `${SERVER_API_BASE_URL}/api/pos/reports/customers`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+    const data = await response.json();
+
+    if (!response.ok) {
+      
+      return;
+    }
+
+    // Check if the user has admin role
+    if (data.user.role !== 'admin') {
+      
+      return;
+    }
+
+    
+    console.log("data:",data)   
+  } catch (error) {
+    
+  }
+};
 
 export default function page() {
   const { posUser, loading, setAuthData } = useDataContext();
 
+  useEffect(() => {
+    getCustomerReport();
+  }, []);
+  
   console.log(posUser, loading)
   return (
     <PageContainer scrollable={true}>
