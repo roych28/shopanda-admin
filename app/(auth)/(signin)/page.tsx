@@ -21,7 +21,7 @@ export default function AuthenticationPage() {
     const handleLogin = async (email: string, password: string) => {
       try {
         const response = await fetch(
-          `${SERVER_API_BASE_URL}/api/pos/login`,
+          `${SERVER_API_BASE_URL}/pos/login`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

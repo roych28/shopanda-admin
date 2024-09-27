@@ -22,7 +22,7 @@ const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const getCustomerReport = async () => {
   try {
     const response = await fetch(
-      `${SERVER_API_BASE_URL}/api/pos/reports/customers`,
+      `${SERVER_API_BASE_URL}/pos/reports/customers`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

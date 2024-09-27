@@ -9,5 +9,6 @@
   "Error":"Error",
   "loginFailed":"login Failed",
   "adminOnly":"Admin Only",
-  "Loading":"Loading"
+  "Loading":"Loading",
+  "errorOccurred":"An error occurred"
 }

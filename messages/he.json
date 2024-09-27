@@ -9,5 +9,6 @@
   "Error":"שגיאה",
   "loginFailed":"התחברות נכשלה",
   "adminOnly":"גישה נדחתה אין הרשאה",
-  "Loading":"בטעינה"
+  "Loading":"בטעינה",
+  "errorOccurred":"אירעה שגיאה"
 }
