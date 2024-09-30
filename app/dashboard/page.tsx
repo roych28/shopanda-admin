@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
 import { PieGraph } from '@/components/charts/pie-graph';
@@ -7,55 +7,62 @@ import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 
-const getCustomerReport = async () => {
+// Fetch all reports
+const fetchReports = async (endpoint) => {
   try {
     const response = await fetch(
-      `${SERVER_API_BASE_URL}/pos/reports/customers`,
+      `${SERVER_API_BASE_URL}/pos/reports/${endpoint}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       }
     );
     const data = await response.json();
-
     if (!response.ok) {
-      
-      return;
+      throw new Error(`Failed to fetch ${endpoint} report`);
     }
-
-    // Check if the user has admin role
-    if (data.user.role !== 'admin') {
-      
-      return;
-    }
-
-    
-    console.log("data:",data)   
+    return data;
   } catch (error) {
-    
+    console.error(`Error fetching ${endpoint} report:`, error);
+    return [];
   }
 };
 
-export default function page() {
-  const { posUser, loading, setAuthData } = useDataContext();
+export default function Page() {
+  const { posUser } = useDataContext();
+  const [depositReport, setDepositReport] = useState([]);
+  const [salesByHourReport, setSalesByHourReport] = useState([]);
+  const [salesByVendorReport, setSalesByVendorReport] = useState([]);
+  const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState([]);
+  const [inactiveCustomersReport, setInactiveCustomersReport] = useState([]);
 
+  // Fetch all reports when the page loads
   useEffect(() => {
-    getCustomerReport();
+    const fetchAllReports = async () => {
+      const deposits = await fetchReports('deposits');
+      setDepositReport(deposits);
+
+      const salesByHour = await fetchReports('sales-by-hour');
+      setSalesByHourReport(salesByHour);
+
+      const salesByVendor = await fetchReports('sales-by-vendor');
+      setSalesByVendorReport(salesByVendor);
+
+      const vendorRealMoney = await fetchReports('vendor-real-money');
+      setVendorRealMoneyReport(vendorRealMoney);
+
+      const inactiveCustomers = await fetchReports('inactive-customers');
+      setInactiveCustomersReport(inactiveCustomers);
+    };
+    fetchAllReports();
   }, []);
-  
-  console.log(posUser, loading)
+
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
@@ -77,108 +84,67 @@ export default function page() {
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {/* Total Deposits */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Revenue
+                    Total Deposits
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
-                  <p className="text-xs text-muted-foreground">
-                    +20.1% from last month
-                  </p>
+                  <pre>{JSON.stringify(depositReport, null, 2)}</pre>
                 </CardContent>
               </Card>
+
+              {/* Sales by Vendor */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Subscriptions
+                    Sales by Vendor
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+2350</div>
-                  <p className="text-xs text-muted-foreground">
-                    +180.1% from last month
-                  </p>
+                  <pre>{JSON.stringify(salesByVendorReport, null, 2)}</pre>
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <rect width="20" height="14" x="2" y="5" rx="2" />
-                    <path d="M2 10h20" />
-                  </svg>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">+12,234</div>
-                  <p className="text-xs text-muted-foreground">
-                    +19% from last month
-                  </p>
-                </CardContent>
-              </Card>
+
+              {/* Vendor Real Money after Bonuses */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Active Now
+                    Vendor Real Money (after Bonus)
                   </CardTitle>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    className="h-4 w-4 text-muted-foreground"
-                  >
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                  </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">+573</div>
-                  <p className="text-xs text-muted-foreground">
-                    +201 since last hour
-                  </p>
+                  <pre>{JSON.stringify(vendorRealMoneyReport, null, 2)}</pre>
+                </CardContent>
+              </Card>
+
+              {/* Sales by Hour in Pie Graph */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Sales by Hour
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PieGraph data={salesByHourReport} />
+                </CardContent>
+              </Card>
+
+              {/* Inactive Customers */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Inactive Customers
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre>{JSON.stringify(inactiveCustomersReport, null, 2)}</pre>
                 </CardContent>
               </Card>
             </div>
+
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
                 <BarGraph />
