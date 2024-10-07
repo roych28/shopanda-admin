@@ -4,7 +4,9 @@
 import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
-import { PieGraph } from '@/components/charts/pie-graph';
+import { PieGraph } from '@/components/charts/pie-graph-total';
+import { PieGraphBonus } from '@/components/charts/pie-graph-bonus';
+import { PieGraphRealMoney } from '@/components/charts/pie-graph-real-money';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
@@ -40,6 +42,8 @@ const fetchReports = async (endpoint: any) => {
 export default function Page() {
   const { posUser } = useDataContext();
   const [depositReport, setDepositReport] = useState<any>(null);
+  const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
+
   const [salesByHourReport, setSalesByHourReport] = useState(null);
   const [salesByVendorReport, setSalesByVendorReport] = useState(null);
   const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState(null);
@@ -51,6 +55,26 @@ export default function Page() {
       const deposits = await fetchReports('deposits');
       console.log('deposits', deposits);
       setDepositReport(deposits);
+
+      const transformedData = [
+        {
+          browser: 'Deposits',
+          visitors: parseFloat(depositReport?.[0].total_amount || 0),
+          fill: 'var(--color-chrome)', // Replace with your color
+        },
+        {
+          browser: 'Without Payment',
+          visitors: parseFloat(depositReport?.[1].total_amount || 0),
+          fill: 'var(--color-safari)', // Replace with your color
+        },
+        {
+          browser: 'POS Deposits',
+          visitors: parseFloat(depositReport?.[3].total_amount || 0),
+          fill: 'var(--color-edge)', // Replace with your color
+        }
+      ];
+
+      setDepositReportForPie(transformedData);
 
       /*const salesByHour = await fetchReports('sales-by-hour');
       setSalesByHourReport(salesByHour);
@@ -96,10 +120,11 @@ export default function Page() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre>{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
-                <pre>{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
-                <pre>{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
+                <pre className="text-blue-500">{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
+                <pre className="text-yellow-500">{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
+                <pre className="text-red-500">{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
                 </CardContent>
+                {depositReportForPie && <PieGraph/>}
               </Card>
 
               <Card>
@@ -109,21 +134,22 @@ export default function Page() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre>{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
-                <pre>{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
-                <pre>{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
+                <pre className="text-blue-500">{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
+                <pre className="text-yellow-500">{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
+                <pre className="text-red-500">{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
                 </CardContent>
+                <PieGraphBonus/>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
                     {`Total Real Money - ${(
-                      parseFloat(depositReport?.[0].total_amount || 0) +
-                      parseFloat(depositReport?.[1].total_amount || 0) +
-                      parseFloat(depositReport?.[3].total_amount || 0) -
-                      (parseFloat(depositReport?.[0].total_bonus || 0) +
-                      parseFloat(depositReport?.[1].total_bonus || 0))
+                      parseFloat(depositReport?.[0]?.total_amount || 0) +
+                      parseFloat(depositReport?.[1]?.total_amount || 0) +
+                      parseFloat(depositReport?.[3]?.total_amount || 0) -
+                      (parseFloat(depositReport?.[0]?.total_bonus || 0) +
+                      parseFloat(depositReport?.[1]?.total_bonus || 0))
                     ).toFixed(0)}`}
                   </CardTitle>
                 </CardHeader>
@@ -132,55 +158,9 @@ export default function Page() {
                   <pre>{`Info Real Money - ${(parseFloat(depositReport?.[1].total_amount || 0) - parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}</pre>
                   <pre>{`POS Real Money - ${parseFloat(depositReport?.[3].total_amount || 0).toFixed(0)}`}</pre>
                 </CardContent>
+                <PieGraphRealMoney />
               </Card>
 
-              {/* Sales by Vendor */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Sales by Vendor
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre>{JSON.stringify(salesByVendorReport, null, 2)}</pre>
-                </CardContent>
-              </Card>
-
-              {/* Vendor Real Money after Bonuses */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Vendor Real Money (after Bonus)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre>{JSON.stringify(vendorRealMoneyReport, null, 2)}</pre>
-                </CardContent>
-              </Card>
-
-              {/* Sales by Hour in Pie Graph */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Sales by Hour
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PieGraph data={salesByHourReport} />
-                </CardContent>
-              </Card>
-
-              {/* Inactive Customers */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Inactive Customers
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre>{JSON.stringify(inactiveCustomersReport, null, 2)}</pre>
-                </CardContent>
-              </Card>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -200,9 +180,6 @@ export default function Page() {
               </Card>*/}
               <div className="col-span-4">
                 <AreaGraph />
-              </div>
-              <div className="col-span-4 md:col-span-3">
-                <PieGraph />
               </div>
             </div>
           </TabsContent>
