@@ -1,0 +1,14 @@
+{
+  "hello": "Hello",
+  "Login": "Login",
+  "loginPrompt": "Enter your email and password to access your account",
+  "Email": "Email",
+  "Password": "Password",
+  "EnterEmail": "Enter your email",
+  "EnterPassword": "Enter your password",
+  "Error":"Error",
+  "loginFailed":"login Failed",
+  "adminOnly":"Admin Only",
+  "Loading":"Loading",
+  "errorOccurred":"An error occurred"
+}

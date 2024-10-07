@@ -1,15 +1,57 @@
-import { Metadata } from 'next';
+'use client'; 
+
 import Link from 'next/link';
 import UserAuthForm from '@/components/forms/user-auth-form';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation'; 
+import { useState , useContext} from 'react';
+import { useDataContext } from '@/lib/DataProvider';
 
-export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
-};
+const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 
 export default function AuthenticationPage() {
+    const t = useTranslations();
+    const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState('');
+    const { setAuthData } = useDataContext();
+
+
+    const handleLogin = async (email: string, password: string) => {
+      try {
+        const response = await fetch(
+          `${SERVER_API_BASE_URL}/pos/login`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          }
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          setErrorMessage(data.responseMessage || t('loginFailed'));
+          return;
+        }
+
+        // Check if the user has admin role
+        if (data.user.role !== 'admin') {
+          setErrorMessage(t('adminOnly'));
+          return;
+        }
+
+        setAuthData(data.user, data.token);
+        console.log("token:",data.token, "user:", data.user)
+
+        // If everything is fine, store token and redirect
+        localStorage.setItem('data', JSON.stringify(data));
+        router.push('/dashboard'); // Redirect to the dashboard
+      } catch (error) {
+        setErrorMessage(t('errorOccurred')); // Handle network or server errors
+      }
+    };
+
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
@@ -38,7 +80,7 @@ export default function AuthenticationPage() {
           </svg>
           Logo
         </div>
-        <div className="relative z-20 mt-auto">
+        {/* <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;This library has saved me countless hours of work and
@@ -47,19 +89,18 @@ export default function AuthenticationPage() {
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
-        </div>
+        </div> */}
       </div>
       <div className="flex h-full items-center p-4 lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
-            </h1>
+            {t('Login')}
+             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to create your account
-            </p>
+            {t('loginPrompt')}</p>
           </div>
-          <UserAuthForm />
+          <UserAuthForm onSubmit={handleLogin} errorMessage={errorMessage} />
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{' '}
             <Link
