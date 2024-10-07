@@ -29,7 +29,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} dir={locale === 'he' ? 'rtl' : 'ltr'}>
+    <html lang={locale} dir={'ltr' /*locale === 'he' ? 'rtl' : 'ltr'*/}>
       <body
         className={`${inter.className} overflow-hidden `}
         suppressHydrationWarning={true}

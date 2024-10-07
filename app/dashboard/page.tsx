@@ -40,6 +40,8 @@ const fetchReports = async (endpoint: any) => {
 export default function Page() {
   const { posUser } = useDataContext();
   const [depositReport, setDepositReport] = useState<any>(null);
+  const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
+
   const [salesByHourReport, setSalesByHourReport] = useState(null);
   const [salesByVendorReport, setSalesByVendorReport] = useState(null);
   const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState(null);
@@ -51,6 +53,26 @@ export default function Page() {
       const deposits = await fetchReports('deposits');
       console.log('deposits', deposits);
       setDepositReport(deposits);
+
+      const transformedData = [
+        {
+          browser: 'Deposits',
+          visitors: parseFloat(depositReport?.[0].total_amount || 0),
+          fill: 'var(--color-chrome)', // Replace with your color
+        },
+        {
+          browser: 'Without Payment',
+          visitors: parseFloat(depositReport?.[1].total_amount || 0),
+          fill: 'var(--color-safari)', // Replace with your color
+        },
+        {
+          browser: 'POS Deposits',
+          visitors: parseFloat(depositReport?.[3].total_amount || 0),
+          fill: 'var(--color-edge)', // Replace with your color
+        }
+      ];
+
+      setDepositReportForPie(transformedData);
 
       /*const salesByHour = await fetchReports('sales-by-hour');
       setSalesByHourReport(salesByHour);
@@ -119,11 +141,11 @@ export default function Page() {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
                     {`Total Real Money - ${(
-                      parseFloat(depositReport?.[0].total_amount || 0) +
-                      parseFloat(depositReport?.[1].total_amount || 0) +
-                      parseFloat(depositReport?.[3].total_amount || 0) -
-                      (parseFloat(depositReport?.[0].total_bonus || 0) +
-                      parseFloat(depositReport?.[1].total_bonus || 0))
+                      parseFloat(depositReport?.[0]?.total_amount || 0) +
+                      parseFloat(depositReport?.[1]?.total_amount || 0) +
+                      parseFloat(depositReport?.[3]?.total_amount || 0) -
+                      (parseFloat(depositReport?.[0]?.total_bonus || 0) +
+                      parseFloat(depositReport?.[1]?.total_bonus || 0))
                     ).toFixed(0)}`}
                   </CardTitle>
                 </CardHeader>
@@ -134,51 +156,13 @@ export default function Page() {
                 </CardContent>
               </Card>
 
-              {/* Sales by Vendor */}
+              {/* Deposits in Pie Graph */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Sales by Vendor
-                  </CardTitle>
+                  <CardTitle className="text-sm font-medium">Deposits</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre>{JSON.stringify(salesByVendorReport, null, 2)}</pre>
-                </CardContent>
-              </Card>
-
-              {/* Vendor Real Money after Bonuses */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Vendor Real Money (after Bonus)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre>{JSON.stringify(vendorRealMoneyReport, null, 2)}</pre>
-                </CardContent>
-              </Card>
-
-              {/* Sales by Hour in Pie Graph */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Sales by Hour
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PieGraph data={salesByHourReport} />
-                </CardContent>
-              </Card>
-
-              {/* Inactive Customers */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Inactive Customers
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre>{JSON.stringify(inactiveCustomersReport, null, 2)}</pre>
+                  {depositReportForPie && <PieGraph data={depositReportForPie} />}
                 </CardContent>
               </Card>
             </div>
