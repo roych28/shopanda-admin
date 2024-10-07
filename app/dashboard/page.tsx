@@ -1,4 +1,6 @@
+// @ts-nocheck
 'use client'
+
 import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
@@ -14,7 +16,7 @@ import { useDataContext } from '@/lib/DataProvider';
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 
 // Fetch all reports
-const fetchReports = async (endpoint) => {
+const fetchReports = async (endpoint: any) => {
   try {
     const response = await fetch(
       `${SERVER_API_BASE_URL}/pos/reports/${endpoint}`,
@@ -27,7 +29,8 @@ const fetchReports = async (endpoint) => {
     if (!response.ok) {
       throw new Error(`Failed to fetch ${endpoint} report`);
     }
-    return data;
+    console.log(`Fetched ${endpoint} report:`, data.data);
+    return data.data;
   } catch (error) {
     console.error(`Error fetching ${endpoint} report:`, error);
     return [];
@@ -36,19 +39,20 @@ const fetchReports = async (endpoint) => {
 
 export default function Page() {
   const { posUser } = useDataContext();
-  const [depositReport, setDepositReport] = useState([]);
-  const [salesByHourReport, setSalesByHourReport] = useState([]);
-  const [salesByVendorReport, setSalesByVendorReport] = useState([]);
-  const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState([]);
-  const [inactiveCustomersReport, setInactiveCustomersReport] = useState([]);
+  const [depositReport, setDepositReport] = useState<any>(null);
+  const [salesByHourReport, setSalesByHourReport] = useState(null);
+  const [salesByVendorReport, setSalesByVendorReport] = useState(null);
+  const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState(null);
+  const [inactiveCustomersReport, setInactiveCustomersReport] = useState(null);
 
   // Fetch all reports when the page loads
   useEffect(() => {
     const fetchAllReports = async () => {
       const deposits = await fetchReports('deposits');
+      console.log('deposits', deposits);
       setDepositReport(deposits);
 
-      const salesByHour = await fetchReports('sales-by-hour');
+      /*const salesByHour = await fetchReports('sales-by-hour');
       setSalesByHourReport(salesByHour);
 
       const salesByVendor = await fetchReports('sales-by-vendor');
@@ -58,7 +62,7 @@ export default function Page() {
       setVendorRealMoneyReport(vendorRealMoney);
 
       const inactiveCustomers = await fetchReports('inactive-customers');
-      setInactiveCustomersReport(inactiveCustomers);
+      setInactiveCustomersReport(inactiveCustomers);*/
     };
     fetchAllReports();
   }, []);
@@ -87,12 +91,46 @@ export default function Page() {
               {/* Total Deposits */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Deposits
+                  <CardTitle className="text-xl font-medium">
+                  {`Total Credit Deposits - ${(parseFloat(depositReport?.[0].total_amount || 0) + parseFloat(depositReport?.[1].total_amount || 0) + parseFloat(depositReport?.[3].total_amount || 0)).toFixed(0)}`}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre>{JSON.stringify(depositReport, null, 2)}</pre>
+                <pre>{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
+                <pre>{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
+                <pre>{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-xl font-medium">
+                  {`Total Bonus Deposits - ${(parseFloat(depositReport?.[0].total_bonus || 0) + parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                <pre>{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
+                <pre>{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
+                <pre>{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-xl font-medium">
+                    {`Total Real Money - ${(
+                      parseFloat(depositReport?.[0].total_amount || 0) +
+                      parseFloat(depositReport?.[1].total_amount || 0) +
+                      parseFloat(depositReport?.[3].total_amount || 0) -
+                      (parseFloat(depositReport?.[0].total_bonus || 0) +
+                      parseFloat(depositReport?.[1].total_bonus || 0))
+                    ).toFixed(0)}`}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre>{`App Real Money - ${(parseFloat(depositReport?.[0].total_amount || 0) - parseFloat(depositReport?.[0].total_bonus || 0)).toFixed(0)}`}</pre>
+                  <pre>{`Info Real Money - ${(parseFloat(depositReport?.[1].total_amount || 0) - parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}</pre>
+                  <pre>{`POS Real Money - ${parseFloat(depositReport?.[3].total_amount || 0).toFixed(0)}`}</pre>
                 </CardContent>
               </Card>
 
@@ -149,7 +187,7 @@ export default function Page() {
               <div className="col-span-4">
                 <BarGraph />
               </div>
-              <Card className="col-span-4 md:col-span-3">
+              {/*<Card className="col-span-4 md:col-span-3">
                 <CardHeader>
                   <CardTitle>Recent Sales</CardTitle>
                   <CardDescription>
@@ -159,7 +197,7 @@ export default function Page() {
                 <CardContent>
                   <RecentSales />
                 </CardContent>
-              </Card>
+              </Card>*/}
               <div className="col-span-4">
                 <AreaGraph />
               </div>

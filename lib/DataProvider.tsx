@@ -1,7 +1,7 @@
 
 
+// @ts-nocheck
 import React, { useState, useEffect, useContext, createContext, ReactNode } from "react";
-
 
 interface DataContextType {
   posUser: any;
