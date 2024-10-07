@@ -4,7 +4,9 @@
 import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
-import { PieGraph } from '@/components/charts/pie-graph';
+import { PieGraph } from '@/components/charts/pie-graph-total';
+import { PieGraphBonus } from '@/components/charts/pie-graph-bonus';
+import { PieGraphRealMoney } from '@/components/charts/pie-graph-real-money';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
@@ -118,10 +120,11 @@ export default function Page() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre>{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
-                <pre>{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
-                <pre>{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
+                <pre className="text-blue-500">{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
+                <pre className="text-yellow-500">{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
+                <pre className="text-red-500">{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
                 </CardContent>
+                {depositReportForPie && <PieGraph/>}
               </Card>
 
               <Card>
@@ -131,10 +134,11 @@ export default function Page() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre>{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
-                <pre>{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
-                <pre>{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
+                <pre className="text-blue-500">{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
+                <pre className="text-yellow-500">{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
+                <pre className="text-red-500">{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
                 </CardContent>
+                <PieGraphBonus/>
               </Card>
 
               <Card>
@@ -154,17 +158,9 @@ export default function Page() {
                   <pre>{`Info Real Money - ${(parseFloat(depositReport?.[1].total_amount || 0) - parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}</pre>
                   <pre>{`POS Real Money - ${parseFloat(depositReport?.[3].total_amount || 0).toFixed(0)}`}</pre>
                 </CardContent>
+                <PieGraphRealMoney />
               </Card>
 
-              {/* Deposits in Pie Graph */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Deposits</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {depositReportForPie && <PieGraph data={depositReportForPie} />}
-                </CardContent>
-              </Card>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -184,9 +180,6 @@ export default function Page() {
               </Card>*/}
               <div className="col-span-4">
                 <AreaGraph />
-              </div>
-              <div className="col-span-4 md:col-span-3">
-                <PieGraph />
               </div>
             </div>
           </TabsContent>
