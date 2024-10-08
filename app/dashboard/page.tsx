@@ -72,15 +72,15 @@ export default function DashboardPage() {
       const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
       const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
       const totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
-      console.log(totalAmount, totalBonus);
-      const totalCredits = totalAmount + totalBonus;
       
+      const totalCredits = totalAmount + totalBonus;
+      console.log(totalAmount, totalCredits);
       setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
       const chartData = [
-        { type: 'Deposit:  ', total_amount: totalDepositAmount, fill: 'blue' },
-        { type: 'Without Payment:  ', total_amount: totalWithoutPaymentAmount, fill: 'yellow' },
-        { type: 'POS Deposit:  ', total_amount: totalPosDepositAmount, fill: 'red' }
+        { type: 'Deposit:  ', total_amount: totalDepositAmount, fill: '#49E6A1' },
+        { type: 'Without Payment:  ', total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
+        { type: 'POS Deposit:  ', total_amount: totalPosDepositAmount, fill: '#F64894' }
       ];
 
       setDepositReportForPie(chartData);
@@ -152,7 +152,7 @@ export default function DashboardPage() {
                     </pre>
                 </CardContent>                
                 {depositReportForPie && <PieGraph chartData={depositReportForPie} />}
-                <div className="text-center text-xl font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
               </Card>
 
               <Card>
