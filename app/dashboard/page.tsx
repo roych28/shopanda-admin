@@ -14,9 +14,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
+import { useTranslations } from 'next-intl';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
-
+const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
 // Fetch all reports
 const fetchReports = async (endpoint: any) => {
   try {
@@ -39,42 +40,50 @@ const fetchReports = async (endpoint: any) => {
   }
 };
 
-export default function Page() {
+export default function DashboardPage() {
   const { posUser } = useDataContext();
-  const [depositReport, setDepositReport] = useState<any>(null);
-  const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
+  const t = useTranslations();
 
-  const [salesByHourReport, setSalesByHourReport] = useState(null);
-  const [salesByVendorReport, setSalesByVendorReport] = useState(null);
-  const [vendorRealMoneyReport, setVendorRealMoneyReport] = useState(null);
-  const [inactiveCustomersReport, setInactiveCustomersReport] = useState(null);
+  const [realMoneyReport, setrealMoneyReport] = useState<any>(null);
+  const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
+  const [creditsToRealMoney, setCreditsToRealMoney] = useState(0);
+  const [fetchingData, setFetchingData] = useState(true);
 
   // Fetch all reports when the page loads
   useEffect(() => {
     const fetchAllReports = async () => {
       const deposits = await fetchReports('deposits');
-      console.log('deposits', deposits);
-      setDepositReport(deposits);
 
-      const transformedData = [
-        {
-          browser: 'Deposits',
-          visitors: parseFloat(depositReport?.[0].total_amount || 0),
-          fill: 'var(--color-chrome)', // Replace with your color
-        },
-        {
-          browser: 'Without Payment',
-          visitors: parseFloat(depositReport?.[1].total_amount || 0),
-          fill: 'var(--color-safari)', // Replace with your color
-        },
-        {
-          browser: 'POS Deposits',
-          visitors: parseFloat(depositReport?.[3].total_amount || 0),
-          fill: 'var(--color-edge)', // Replace with your color
-        }
+      // real money 
+      const totalDepositAmount = parseFloat(deposits[0].total_amount);
+      const totalWithoutPaymentAmount = parseFloat(deposits[1].total_amount);
+      const totalPosDepositAmount = parseFloat(deposits[3].total_amount);
+      const totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
+
+      setrealMoneyReport({
+        totalDepositAmount,
+        totalWithoutPaymentAmount,
+        totalPosDepositAmount,
+        totalAmount
+      });
+
+      // bonus
+      const totalDepositBonus = parseFloat(deposits[0].total_bonus);
+      const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
+      const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
+      const totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
+      console.log(totalAmount, totalBonus);
+      const totalCredits = totalAmount + totalBonus;
+      
+      setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
+
+      const chartData = [
+        { type: 'Deposit:  ', total_amount: totalDepositAmount, fill: 'blue' },
+        { type: 'Without Payment:  ', total_amount: totalWithoutPaymentAmount, fill: 'yellow' },
+        { type: 'POS Deposit:  ', total_amount: totalPosDepositAmount, fill: 'red' }
       ];
 
-      setDepositReportForPie(transformedData);
+      setDepositReportForPie(chartData);
 
       /*const salesByHour = await fetchReports('sales-by-hour');
       setSalesByHourReport(salesByHour);
@@ -87,9 +96,15 @@ export default function Page() {
 
       const inactiveCustomers = await fetchReports('inactive-customers');
       setInactiveCustomersReport(inactiveCustomers);*/
+
+      setFetchingData(false);
     };
     fetchAllReports();
   }, []);
+
+  if(fetchingData) {
+    return <div>{t('loading')}</div>
+  }
 
   return (
     <PageContainer scrollable={true}>
@@ -98,50 +113,63 @@ export default function Page() {
           <div className="text-2xl font-bold tracking-tight">
             {posUser?.username}
           </div>
-          <div className="hidden items-center space-x-2 md:flex">
+          {/*<div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
             <Button>Download</Button>
-          </div>
+          </div>*/}
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
-          </TabsList>
+          {/*<TabsList>
+            <TabsTrigger value="overview"></TabsTrigger>
+          </TabsList>*/}
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {/* Total Deposits */}
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-medium">
-                  {`Total Credit Deposits - ${(parseFloat(depositReport?.[0].total_amount || 0) + parseFloat(depositReport?.[1].total_amount || 0) + parseFloat(depositReport?.[3].total_amount || 0)).toFixed(0)}`}
+                <CardHeader>
+                  <CardTitle>
+                    <div>{`${t('totalIncome')} - ${realMoneyReport.totalAmount}`}</div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre className="text-blue-500">{`App Credit Deposits - ${parseFloat(depositReport?.[0].total_amount || 0).toFixed(0) }`}</pre>
-                <pre className="text-yellow-500">{`Info Credit Deposits- ${depositReport?.[1].total_amount}`}</pre>
-                <pre className="text-red-500">{`POS Credit Deposits- ${parseFloat(depositReport?.[3].total_amount).toFixed(0)}`}</pre>
-                </CardContent>
-                {depositReportForPie && <PieGraph/>}
+                  <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('siteIncome')} - ${realMoneyReport.totalDepositAmount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieOne"></div>
+                      </div>
+                    </pre>
+                    <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('cacheIncome')} - ${realMoneyReport.totalWithoutPaymentAmount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
+                      </div>
+                    </pre>
+                    <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('directIncome')} - ${realMoneyReport.totalPosDepositAmount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieThree"></div>
+                      </div>
+                    </pre>
+                </CardContent>                
+                {depositReportForPie && <PieGraph chartData={depositReportForPie} />}
+                <div className="text-center text-xl font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
-                  {`Total Bonus Deposits - ${(parseFloat(depositReport?.[0].total_bonus || 0) + parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}
+                  {`Total Bonus Deposits - ${1}`}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                <pre className="text-blue-500">{`App Bonus Deposits - ${depositReport?.[0].total_bonus}`}</pre>
-                <pre className="text-yellow-500">{`Info Bonus Deposits- ${depositReport?.[1].total_bonus}`}</pre>
-                <pre className="text-red-500">{`POS Bonus Deposits- ${depositReport?.[3].total_bonus}`}</pre>
+                <pre className="text-blue-500">{`App Bonus Deposits - ${1}`}</pre>
+                <pre className="text-yellow-500">{`Info Bonus Deposits- ${2}`}</pre>
+                <pre className="text-red-500">{`POS Bonus Deposits- ${3}`}</pre>
                 </CardContent>
                 <PieGraphBonus/>
               </Card>
 
-              <Card>
+              {/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
                     {`Total Real Money - ${(
@@ -159,7 +187,7 @@ export default function Page() {
                   <pre className="text-red-500">{`POS Real Money - ${parseFloat(depositReport?.[3].total_amount || 0).toFixed(0)}`}</pre>
                 </CardContent>
                 <PieGraphRealMoney />
-              </Card>
+              </Card>*/}
 
             </div>
 

@@ -10,5 +10,11 @@
   "loginFailed":"login Failed",
   "adminOnly":"Admin Only",
   "Loading":"Loading",
-  "errorOccurred":"An error occurred"
+  "errorOccurred":"An error occurred",
+  "totalIncome": "Total Income",
+  "siteIncome": "Site Credit Purchases",
+  "cacheIncome": "Cash Or Bit Credit Purchases",
+  "directIncome": "Direct Credit Purchases",
+  "creditToRealMoneyRatio": "Credit To Real Money Ratio",
+  "loading": "Loading..."
 }

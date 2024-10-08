@@ -3,18 +3,12 @@
 import * as React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { Label, Pie, PieChart } from 'recharts';
-  
+
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-
-const chartData = [
-  { type: 'Deposit:  ', total_amount: 83000, fill: 'blue' },
-  { type: 'Without Payment:  ', total_amount: 39530, fill: 'yellow' },
-  { type: 'POS Deposit:  ', total_amount: 23141, fill: 'red' }
-];
 
 const chartConfig = {
   total_amount: {
@@ -34,11 +28,13 @@ const chartConfig = {
   }
 };
 
-export function PieGraph() {
+export function PieGraph({chartData} :any ) {
   const totalDeposits = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.total_amount, 0);
-  }, []);
+    return chartData?.reduce((acc : number, curr: any) => acc + curr.total_amount, 0);
+  }, [chartData]);
 
+  if(!chartData) return null;
+  
   return (
         <ChartContainer
           config={chartConfig}

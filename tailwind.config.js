@@ -18,6 +18,11 @@ module.exports = {
     },
     extend: {
       colors: {
+        pieOne: '#49E6A1',
+        pieTwo: '#FDF956',
+        pieThree: '#F64894',
+        pieFour: '#C7C7C3',
+        pieFive: '#666666',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

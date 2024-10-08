@@ -10,5 +10,11 @@
   "loginFailed":"התחברות נכשלה",
   "adminOnly":"גישה נדחתה אין הרשאה",
   "Loading":"בטעינה",
-  "errorOccurred":"אירעה שגיאה"
+  "errorOccurred":"אירעה שגיאה",
+  "totalIncome": "סהכ הכנסות (כסף אמיתי)",
+  "siteIncome": "רכישות של קרדיט באתר",
+  "cacheIncome": "רכישות של קרדיט במזומן",
+  "directIncome": "רכישות קרדיט ישירות",
+  "creditToRealMoneyRatio": " יחס כסף אמיתי לקרדיט",
+  "loading":"טוען..."
 }
