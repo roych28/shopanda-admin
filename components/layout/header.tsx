@@ -2,6 +2,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle/theme-toggle';
 import { cn } from '@/lib/utils';
 import { MobileSidebar } from './mobile-sidebar';
 import { UserNav } from './user-nav';
+import Image from 'next/image';
 
 export default function Header() {
   return (
@@ -12,7 +13,10 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-2">
           <UserNav />
-          <ThemeToggle />
+          <div className="justify-self" >
+          <Image src="/shopanda_logo.png" alt="Logo" width={120} height={120} />
+          </div>
+          {/*<ThemeToggle />*/}
         </div>
       </nav>
     </header>
