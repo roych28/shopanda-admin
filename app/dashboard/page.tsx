@@ -206,7 +206,7 @@ export default function DashboardPage() {
                 <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersWithNfc}`}</div>
               </Card>
 
-              <Card>
+              {/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
                   {`Total Bonus Deposits - ${1}`}
@@ -218,7 +218,7 @@ export default function DashboardPage() {
                 <pre className="text-red-500">{`POS Bonus Deposits- ${3}`}</pre>
                 </CardContent>
                 <PieGraphBonus/>
-              </Card>
+              </Card>*/}
 
               {/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
