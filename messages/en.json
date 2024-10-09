@@ -16,5 +16,13 @@
   "cacheIncome": "Cash Or Bit Credit Purchases",
   "directIncome": "Direct Credit Purchases",
   "creditToRealMoneyRatio": "Credit To Real Money Ratio",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "customersData": "Customers Data",
+  "registeredCustomers": "Registered Customers",
+  "males": "Males",
+  "females": "Females",
+  "other": "Other",
+  "customers": "Customers",
+  "deposits": "Deposits",
+  "CustomersWithNfc": "Customers With NFC"
 }

@@ -1,59 +1,40 @@
 'use client';
 
 import * as React from 'react';
-import { TrendingUp } from 'lucide-react';
-import { Label, Pie, PieChart } from 'recharts';
-  
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
+import { Pie, PieChart, Label } from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { useTranslations } from 'next-intl';
 
-const realMoneyChartData = [
-  { 
-    type: 'App Real Money:  ', 
-    total_real_money: 71705, 
-    fill: 'blue' 
-  },
-  { 
-    type: 'Info Real Money:  ', 
-    total_real_money: 35650, 
-    fill: 'yellow' 
-  },
-  { 
-    type: 'POS Real Money:  ', 
-    total_real_money: 23141, 
-    fill: 'red' 
-  }
-];
+export function PieGraphCmp({ chartData, title }: any) {
+  const t = useTranslations();
 
-const realMoneyChartConfig = {
-  total_real_money: {
-    label: 'Real Money'
-  },
-  'App Real Money': {
-    label: 'App Real Money',
-    color: 'hsl(var(--chart-1))'
-  },
-  'Info Real Money': {
-    label: 'Info Real Money',
-    color: 'hsl(var(--chart-2))'
-  },
-  'POS Real Money': {
-    label: 'POS Real Money',
-    color: 'hsl(var(--chart-3))'
-  }
-};
+  const totalValue = React.useMemo(() => {
+    return chartData?.reduce((acc: number, curr: any) => acc + curr.total_amount, 0);
+  }, [chartData]);
 
-export function PieGraphRealMoney() {
-  const totalRealMoney = React.useMemo(() => {
-    return realMoneyChartData.reduce((acc, curr) => acc + curr.total_real_money, 0);
-  }, []);
+  const genderChartConfig = {
+    total_amount: {
+      label: 'Customers'
+    },
+    males: {
+      label: t('males'),
+      color: 'hsl(var(--pie-five))'
+    },
+    females: {
+      label: t('females'),
+      color: 'hsl(var(--pie-six))'
+    },
+    other: {
+      label: t('other'),
+      color: 'hsl(var(--pie-seven))'
+    }
+  };
+
+  if (!chartData) return null;
 
   return (
     <ChartContainer
-      config={realMoneyChartConfig}
+      config={genderChartConfig}
       className="mx-auto aspect-square max-h-[360px]"
     >
       <PieChart>
@@ -62,12 +43,13 @@ export function PieGraphRealMoney() {
           content={<ChartTooltipContent hideLabel />}
         />
         <Pie
-          data={realMoneyChartData}
-          dataKey="total_real_money"
+          data={chartData}
+          dataKey="total_amount"
           nameKey="type"
           innerRadius={60}
           outerRadius={100}
           strokeWidth={5}
+          fill="hsl(var(--chart-default))"
         >
           <Label
             content={({ viewBox }) => {
@@ -84,18 +66,19 @@ export function PieGraphRealMoney() {
                       y={viewBox.cy}
                       className="fill-foreground text-2xl font-bold"
                     >
-                      {totalRealMoney.toLocaleString()}
+                      {totalValue.toLocaleString()}
                     </tspan>
                     <tspan
                       x={viewBox.cx}
                       y={(viewBox.cy || 0) + 24}
                       className="fill-muted-foreground"
                     >
-                      Real Money
+                      {title}
                     </tspan>
                   </text>
                 );
               }
+              return null;
             }}
           />
         </Pie>

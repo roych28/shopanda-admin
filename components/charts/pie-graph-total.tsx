@@ -28,7 +28,7 @@ const chartConfig = {
   }
 };
 
-export function PieGraph({chartData} :any ) {
+export function PieGraph({chartData, title} :any ) {
   const totalDeposits = React.useMemo(() => {
     return chartData?.reduce((acc : number, curr: any) => acc + curr.total_amount, 0);
   }, [chartData]);
@@ -75,7 +75,7 @@ export function PieGraph({chartData} :any ) {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Deposits
+                          {title}
                         </tspan>
                       </text>
                     );

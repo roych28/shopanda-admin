@@ -6,7 +6,7 @@ import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
 import { PieGraph } from '@/components/charts/pie-graph-total';
 import { PieGraphBonus } from '@/components/charts/pie-graph-bonus';
-import { PieGraphRealMoney } from '@/components/charts/pie-graph-real-money';
+import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
@@ -18,13 +18,14 @@ import { useTranslations } from 'next-intl';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
+
 // Fetch all reports
-const fetchReports = async (endpoint: any) => {
+const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-09-28') => {
   try {
     const response = await fetch(
-      `${SERVER_API_BASE_URL}/pos/reports/${endpoint}`,
+      `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`,
       {
-        method: 'POST',
+        method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       }
     );
@@ -40,14 +41,17 @@ const fetchReports = async (endpoint: any) => {
   }
 };
 
+
 export default function DashboardPage() {
   const { posUser } = useDataContext();
   const t = useTranslations();
 
-  const [realMoneyReport, setrealMoneyReport] = useState<any>(null);
+  const [realMoneyReport, setRealMoneyReport] = useState<any>(null);
   const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
   const [creditsToRealMoney, setCreditsToRealMoney] = useState(0);
   const [fetchingData, setFetchingData] = useState(true);
+  const [customersData, setCustomersData] = useState<any>(null);
+  const [customersDataForPie, setCustomersDataForPie] = useState<any>(null);
 
   // Fetch all reports when the page loads
   useEffect(() => {
@@ -60,7 +64,7 @@ export default function DashboardPage() {
       const totalPosDepositAmount = parseFloat(deposits[3].total_amount);
       const totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
 
-      setrealMoneyReport({
+      setRealMoneyReport({
         totalDepositAmount,
         totalWithoutPaymentAmount,
         totalPosDepositAmount,
@@ -85,6 +89,16 @@ export default function DashboardPage() {
 
       setDepositReportForPie(chartData);
 
+      const customersRes = await fetchReports('get-customer-data');
+      console.log(customersRes);
+      setCustomersData(customersRes);
+
+      const genderChartData = [
+        { type: 'Male', total_amount: customersRes.maleCount, fill: '#666666' },
+        { type: 'Female', total_amount: customersRes.femaleCount, fill: '#FDF956' },
+        { type: 'Other', total_amount: customersRes.otherCount + (customersRes.unknownGenderCount), fill: '#0A0A0A' }
+      ];
+      setCustomersDataForPie(genderChartData);
       /*const salesByHour = await fetchReports('sales-by-hour');
       setSalesByHourReport(salesByHour);
 
@@ -151,8 +165,45 @@ export default function DashboardPage() {
                       </div>
                     </pre>
                 </CardContent>                
-                {depositReportForPie && <PieGraph chartData={depositReportForPie} />}
+                {depositReportForPie && <PieGraph chartData={depositReportForPie} title={t('deposits')}/>}
                 <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+              </Card>
+
+              {/* Customers Data */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <div>{`${t('customersData')}`}</div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('registeredCustomers')} - ${customersData?.customersRegistered}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieFour"></div>
+                      </div>
+                    </pre>
+                    <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('males')} - ${customersData?.maleCount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieFive"></div>
+                      </div>
+                    </pre>
+                    <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('females')} - ${customersData?.femaleCount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
+                      </div>
+                    </pre>
+                    <pre>
+                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className="mr-2">{` ${t('other')} - ${customersData?.otherCount + customersData.unknownGenderCount}`}</div>
+                        <div className="w-3 h-3 rounded-full bg-pieSix"></div>
+                      </div>
+                    </pre>
+                </CardContent>    
+                {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')}/>}
+                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersWithNfc}`}</div>
               </Card>
 
               <Card>
@@ -188,7 +239,6 @@ export default function DashboardPage() {
                 </CardContent>
                 <PieGraphRealMoney />
               </Card>*/}
-
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">

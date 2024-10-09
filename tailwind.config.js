@@ -23,6 +23,8 @@ module.exports = {
         pieThree: '#F64894',
         pieFour: '#C7C7C3',
         pieFive: '#666666',
+        pieSix: '#0A0A0A',
+        pieSeven: '#FDF956',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

@@ -11,10 +11,18 @@
   "adminOnly":"גישה נדחתה אין הרשאה",
   "Loading":"בטעינה",
   "errorOccurred":"אירעה שגיאה",
-  "totalIncome": "סהכ הכנסות (כסף אמיתי)",
+  "totalIncome": "סך הכל הכנסות (כסף אמיתי)",
   "siteIncome": "רכישות של קרדיט באתר",
   "cacheIncome": "רכישות של קרדיט במזומן",
   "directIncome": "רכישות קרדיט ישירות",
   "creditToRealMoneyRatio": " יחס כסף אמיתי לקרדיט",
-  "loading":"טוען..."
+  "loading":"טוען...",
+  "customersData":"נתוני לקוחות",
+  "registeredCustomers":"לקוחות רשומים",
+  "males":"גברים",
+  "females":"נשים",
+  "other":"אחר",
+  "customers":"לקוחות",
+  "deposits":"הפקדות",
+  "CustomersWithNfc":"לקוחות עם צ׳יפ"
 }
