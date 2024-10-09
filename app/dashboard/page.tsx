@@ -82,9 +82,9 @@ export default function DashboardPage() {
       setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
       const chartData = [
-        { type: 'Deposit:  ', total_amount: totalDepositAmount, fill: '#49E6A1' },
-        { type: 'Without Payment:  ', total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
-        { type: 'POS Deposit:  ', total_amount: totalPosDepositAmount, fill: '#F64894' }
+        { type: 'Deposit', displayName: t('deposits'), total_amount: totalDepositAmount, fill: '#49E6A1' },
+        { type: 'Without Payment', displayName: t('cacheOrBit'), total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
+        { type: 'POS Deposit', displayName: t('posDeposit'), total_amount: totalPosDepositAmount, fill: '#F64894' }
       ];
 
       setDepositReportForPie(chartData);
@@ -94,23 +94,11 @@ export default function DashboardPage() {
       setCustomersData(customersRes);
 
       const genderChartData = [
-        { type: 'Male', total_amount: customersRes.maleCount, fill: '#666666' },
-        { type: 'Female', total_amount: customersRes.femaleCount, fill: '#FDF956' },
-        { type: 'Other', total_amount: customersRes.otherCount + (customersRes.unknownGenderCount), fill: '#0A0A0A' }
+        { type: 'Male', displayName: t('males'), total_amount: customersData?.maleCount, fill: '#666666' },
+        { type: 'Female', displayName: t('females'), total_amount: customersData?.femaleCount, fill: '#FDF956' },
+        { type: 'Other', displayName: t('other'), total_amount: customersData?.otherCount + (customersRes?.customersData?.unknownGenderCount), fill: '#0A0A0A' }
       ];
       setCustomersDataForPie(genderChartData);
-      /*const salesByHour = await fetchReports('sales-by-hour');
-      setSalesByHourReport(salesByHour);
-
-      const salesByVendor = await fetchReports('sales-by-vendor');
-      setSalesByVendorReport(salesByVendor);
-
-      const vendorRealMoney = await fetchReports('vendor-real-money');
-      setVendorRealMoneyReport(vendorRealMoney);
-
-      const inactiveCustomers = await fetchReports('inactive-customers');
-      setInactiveCustomersReport(inactiveCustomers);*/
-
       setFetchingData(false);
     };
     fetchAllReports();
@@ -179,33 +167,34 @@ export default function DashboardPage() {
                 <CardContent>
                   <pre>
                       <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('registeredCustomers')} - ${customersData?.customersRegistered}`}</div>
+                        <div className="mr-2">{` ${t('registeredCustomers')} - ${customersData?.customersData?.customersRegistered}`}</div>
                         <div className="w-3 h-3 rounded-full bg-pieFour"></div>
                       </div>
                     </pre>
                     <pre>
                       <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('males')} - ${customersData?.maleCount}`}</div>
+                        <div className="mr-2">{` ${t('males')} - ${customersData?.customersData?.maleCount}`}</div>
                         <div className="w-3 h-3 rounded-full bg-pieFive"></div>
                       </div>
                     </pre>
                     <pre>
                       <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('females')} - ${customersData?.femaleCount}`}</div>
+                        <div className="mr-2">{` ${t('females')} - ${customersData?.customersData?.femaleCount}`}</div>
                         <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
                       </div>
                     </pre>
                     <pre>
                       <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('other')} - ${customersData?.otherCount + customersData.unknownGenderCount}`}</div>
+                        <div className="mr-2">{` ${t('other')} - ${customersData?.customersData?.otherCount + customersData?.customersData?.unknownGenderCount}`}</div>
                         <div className="w-3 h-3 rounded-full bg-pieSix"></div>
                       </div>
                     </pre>
                 </CardContent>    
                 {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')}/>}
-                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersWithNfc}`}</div>
+                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersData?.customersWithNfc}`}</div>
               </Card>
 
+              {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
               {/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
@@ -220,42 +209,14 @@ export default function DashboardPage() {
                 <PieGraphBonus/>
               </Card>*/}
 
-              {/*<Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-medium">
-                    {`Total Real Money - ${(
-                      parseFloat(depositReport?.[0]?.total_amount || 0) +
-                      parseFloat(depositReport?.[1]?.total_amount || 0) +
-                      parseFloat(depositReport?.[3]?.total_amount || 0) -
-                      (parseFloat(depositReport?.[0]?.total_bonus || 0) +
-                      parseFloat(depositReport?.[1]?.total_bonus || 0))
-                    ).toFixed(0)}`}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <pre className="text-blue-500">{`App Real Money - ${(parseFloat(depositReport?.[0].total_amount || 0) - parseFloat(depositReport?.[0].total_bonus || 0)).toFixed(0)}`}</pre>
-                  <pre className="text-yellow-500">{`Info Real Money - ${(parseFloat(depositReport?.[1].total_amount || 0) - parseFloat(depositReport?.[1].total_bonus || 0)).toFixed(0)}`}</pre>
-                  <pre className="text-red-500">{`POS Real Money - ${parseFloat(depositReport?.[3].total_amount || 0).toFixed(0)}`}</pre>
-                </CardContent>
-                <PieGraphRealMoney />
-              </Card>*/}
+              
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
-                <BarGraph />
+                
               </div>
-              {/*<Card className="col-span-4 md:col-span-3">
-                <CardHeader>
-                  <CardTitle>Recent Sales</CardTitle>
-                  <CardDescription>
-                    You made 265 sales this month.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <RecentSales />
-                </CardContent>
-              </Card>*/}
+            
               <div className="col-span-4">
                 <AreaGraph />
               </div>

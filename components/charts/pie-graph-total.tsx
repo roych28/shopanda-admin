@@ -48,7 +48,7 @@ export function PieGraph({chartData, title} :any ) {
             <Pie
               data={chartData}
               dataKey="total_amount"
-              nameKey="type"
+              nameKey="displayName"
               innerRadius={60}
               outerRadius={100}
               strokeWidth={5}

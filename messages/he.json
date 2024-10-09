@@ -12,9 +12,9 @@
   "Loading":"בטעינה",
   "errorOccurred":"אירעה שגיאה",
   "totalIncome": "סך הכל הכנסות (כסף אמיתי)",
-  "siteIncome": "רכישות של קרדיט באתר",
-  "cacheIncome": "רכישות של קרדיט במזומן",
-  "directIncome": "רכישות קרדיט ישירות",
+  "siteIncome": "רכישת קרדיט באתר",
+  "cacheIncome": "רכישת קרדיט במזומן",
+  "directIncome": "רכישת קרדיט ישירות",
   "creditToRealMoneyRatio": " יחס כסף אמיתי לקרדיט",
   "loading":"טוען...",
   "customersData":"נתוני לקוחות",
@@ -24,5 +24,8 @@
   "other":"אחר",
   "customers":"לקוחות",
   "deposits":"הפקדות",
-  "CustomersWithNfc":"לקוחות עם צ׳יפ"
+  "CustomersWithNfc":"לקוחות עם צ׳יפ",
+  "pairingChartTitle":"גרף צימוד לפי שעה",
+  "cacheOrBit":"מזומן או ביט",
+  "posDeposit":"הפקדה בקופה"
 }

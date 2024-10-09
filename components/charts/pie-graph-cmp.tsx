@@ -17,7 +17,7 @@ export function PieGraphCmp({ chartData, title }: any) {
       label: 'Customers'
     },
     males: {
-      label: t('males'),
+      label: 'גברים',
       color: 'hsl(var(--pie-five))'
     },
     females: {
@@ -45,7 +45,7 @@ export function PieGraphCmp({ chartData, title }: any) {
         <Pie
           data={chartData}
           dataKey="total_amount"
-          nameKey="type"
+          nameKey="displayName"
           innerRadius={60}
           outerRadius={100}
           strokeWidth={5}

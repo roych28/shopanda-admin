@@ -24,5 +24,8 @@
   "other": "Other",
   "customers": "Customers",
   "deposits": "Deposits",
-  "CustomersWithNfc": "Customers With NFC"
+  "CustomersWithNfc": "Customers With NFC",
+  "pairingChartTitle": "Pairing Chart By Hour",
+  "cacheOrBit": "Cash Or Bit",
+  "posDeposit": "POS Deposit"
 }
