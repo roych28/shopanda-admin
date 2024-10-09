@@ -94,9 +94,9 @@ export default function DashboardPage() {
       setCustomersData(customersRes);
 
       const genderChartData = [
-        { type: 'Male', displayName: t('males'), total_amount: customersData?.maleCount, fill: '#666666' },
-        { type: 'Female', displayName: t('females'), total_amount: customersData?.femaleCount, fill: '#FDF956' },
-        { type: 'Other', displayName: t('other'), total_amount: customersData?.otherCount + (customersRes?.customersData?.unknownGenderCount), fill: '#0A0A0A' }
+        { type: 'Male', displayName: t('males'), total_amount: customersRes?.customersData?.maleCount, fill: '#666666' },
+        { type: 'Female', displayName: t('females'), total_amount: customersRes?.customersData?.femaleCount, fill: '#FDF956' },
+        { type: 'Other', displayName: t('other'), total_amount: customersRes?.customersData?.otherCount + (customersRes?.customersData?.unknownGenderCount), fill: '#0A0A0A' }
       ];
       setCustomersDataForPie(genderChartData);
       setFetchingData(false);
