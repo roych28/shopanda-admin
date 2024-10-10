@@ -44,7 +44,7 @@ export function AreaGraph({ data }: AreaGraphProps) {
       <CardHeader>
         <CardTitle>גרף אזורי לפי ספק - שעות</CardTitle>
         <CardDescription>
-          סה"כ הכנסות ומספר עסקאות לפי שעה לכל ספק
+          סהכ הכנסות ומספר עסקאות לפי שעה לכל ספק
         </CardDescription>
       </CardHeader>
       <CardContent>
