@@ -11,17 +11,13 @@ export type User = {
 
 export type Customer = {
   uid: string;
-  customer_first_name: string;
-  customer_last_name: string;
-  customer_email: string;
-  customer_phone_number: string;
-  customer_profile_image: string;
-  customer_gender: string;
-  customer_nfc: string | null;
-  total_amount_spent: number;
-  last_salesman_first_name: string;
-  last_salesman_last_name: string;
-  last_transaction_date: string;
+  customerFirstName: string;
+  customerLastName: string;
+  customerEmail: string;
+  customerPhoneNumber: string;
+  customerProfileImage: string;
+  customerGender: string;
+  totalAmountSpent: number;
 };
 
 
