@@ -43,7 +43,6 @@ const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-
   }
 };
 
-
 export default function DashboardPage() {
   const { posUser } = useDataContext();
   const t = useTranslations();
@@ -106,30 +105,32 @@ export default function DashboardPage() {
 
       setTopCustomers(customersRes?.topCustomers);
 
-      const formattedData = customersRes.totalSalesPerHour.reduce((acc, item) => {
-        const hour = item.hour;
-        const existingEntry = acc.find((entry) => entry.hour === hour);
-      
-        if (existingEntry) {
-          if (item.vendor_name.trim() === 'המזנון') {
-            existingEntry.vendorA_count = parseInt(item.transaction_count, 10);
-            existingEntry.vendorA_revenue = parseFloat(item.total_revenue);
-          } else if (item.vendor_name.trim() === "צ'אי שופ / הבר") {
-            existingEntry.vendorB_count = parseInt(item.transaction_count, 10);
-            existingEntry.vendorB_revenue = parseFloat(item.total_revenue);
+      const formattedData = customersRes.totalSalesPerHour
+        .reduce((acc, item) => {
+          const hour = item.hour;
+          const existingEntry = acc.find((entry) => entry.hour === hour);
+        
+          if (existingEntry) {
+            if (item.vendor_name.trim() === 'המזנון') {
+              existingEntry.vendorA_count = parseInt(item.transaction_count, 10);
+              existingEntry.vendorA_revenue = parseFloat(item.total_revenue);
+            } else if (item.vendor_name.trim() === "צ'אי שופ / הבר") {
+              existingEntry.vendorB_count = parseInt(item.transaction_count, 10);
+              existingEntry.vendorB_revenue = parseFloat(item.total_revenue);
+            }
+          } else {
+            acc.push({
+              hour: item.hour,
+              vendorA_count: item.vendor_name.trim() === 'המזנון' ? parseInt(item.transaction_count, 10) : 0,
+              vendorB_count: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseInt(item.transaction_count, 10) : 0,
+              vendorA_revenue: item.vendor_name.trim() === 'המזנון' ? parseFloat(item.total_revenue) : 0,
+              vendorB_revenue: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseFloat(item.total_revenue) : 0,
+            });
           }
-        } else {
-          acc.push({
-            hour: item.hour,
-            vendorA_count: item.vendor_name.trim() === 'המזנון' ? parseInt(item.transaction_count, 10) : 0,
-            vendorB_count: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseInt(item.transaction_count, 10) : 0,
-            vendorA_revenue: item.vendor_name.trim() === 'המזנון' ? parseFloat(item.total_revenue) : 0,
-            vendorB_revenue: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseFloat(item.total_revenue) : 0,
-          });
-        }
-      
-        return acc;
-      }, []);
+        
+          return acc;
+        }, [])
+        .sort((a, b) => new Date(a.hour).getTime() - new Date(b.hour).getTime());
 
       setSalesDataPerHour(formattedData);
     };
@@ -253,8 +254,6 @@ export default function DashboardPage() {
                 </CardContent>
                 <PieGraphBonus/>
               </Card>*/}
-
-              
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">

@@ -9,14 +9,14 @@ export default function Header() {
     <header className="sticky inset-x-0 top-0 w-full">
       <nav className="flex items-center justify-between px-4 py-2 md:justify-end">
         <div className={cn('block lg:!hidden')}>
-          <MobileSidebar />
+          {/*<MobileSidebar />*/}
+          {<ThemeToggle />}
         </div>
         <div className="flex items-center gap-2">
           <UserNav />
           <div className="justify-self" >
-          <Image src="/shopanda_logo.png" alt="Logo" width={120} height={120} />
+            <Image src="/shopanda_logo.png" alt="Logo" width={120} height={120} />
           </div>
-          {/*<ThemeToggle />*/}
         </div>
       </nav>
     </header>

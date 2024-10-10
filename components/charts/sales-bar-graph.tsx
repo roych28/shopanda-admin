@@ -52,7 +52,7 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-2 sm:p-6">
+      <CardContent className="px-2">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[300px] w-full sm:h-[500px]"
