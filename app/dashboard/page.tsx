@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
 import { CustomersClient } from '@/components/tables/customer-tables/client';
+import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -54,7 +55,7 @@ export default function DashboardPage() {
   const [customersData, setCustomersData] = useState<any>(null);
   const [customersDataForPie, setCustomersDataForPie] = useState<any>(null);
   const [topCustomers, setTopCustomers] = useState<any>(null);
-
+  const [salesDataPerHour, setSalesDataPerHour] = useState<any>(null);
   // Fetch all reports when the page loads
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -104,6 +105,33 @@ export default function DashboardPage() {
       setFetchingData(false);
 
       setTopCustomers(customersRes?.topCustomers);
+
+      const formattedData = customersRes.totalSalesPerHour.reduce((acc, item) => {
+        const hour = item.hour;
+        const existingEntry = acc.find((entry) => entry.hour === hour);
+      
+        if (existingEntry) {
+          if (item.vendor_name.trim() === 'המזנון') {
+            existingEntry.vendorA_count = parseInt(item.transaction_count, 10);
+            existingEntry.vendorA_revenue = parseFloat(item.total_revenue);
+          } else if (item.vendor_name.trim() === "צ'אי שופ / הבר") {
+            existingEntry.vendorB_count = parseInt(item.transaction_count, 10);
+            existingEntry.vendorB_revenue = parseFloat(item.total_revenue);
+          }
+        } else {
+          acc.push({
+            hour: item.hour,
+            vendorA_count: item.vendor_name.trim() === 'המזנון' ? parseInt(item.transaction_count, 10) : 0,
+            vendorB_count: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseInt(item.transaction_count, 10) : 0,
+            vendorA_revenue: item.vendor_name.trim() === 'המזנון' ? parseFloat(item.total_revenue) : 0,
+            vendorB_revenue: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseFloat(item.total_revenue) : 0,
+          });
+        }
+      
+        return acc;
+      }, []);
+
+      setSalesDataPerHour(formattedData);
     };
     fetchAllReports();
   }, []);
@@ -231,11 +259,15 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
-                
+                {salesDataPerHour && <SalesBarGraph
+                                        data={salesDataPerHour}
+                                        title="גרף מכירות לפי שעה"
+                                        description="השוואת מספר העסקאות לפי שעה בין ספקים שונים"
+                                      />}
               </div>
             
               <div className="col-span-4">
-                <AreaGraph />
+                {/*<AreaGraph data={customersData.totalSalesPerHour} />*/}
               </div>
             </div>
           </TabsContent>
