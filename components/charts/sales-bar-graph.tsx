@@ -51,7 +51,7 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="sm:p-10 pl-10">
+      <CardContent className="px-2 sm:p-6">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-[300px] w-full sm:h-[500px]"
@@ -78,7 +78,7 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
                   return date.toLocaleTimeString('he-IL', {
                     hour: '2-digit',
                     minute: '2-digit',
-                    hour12: false,
+                    hour12: false,  // This ensures 24-hour format
                     timeZone: 'Asia/Jerusalem'
                   });
                 }}
