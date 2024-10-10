@@ -24,7 +24,7 @@ export function UserNav() {
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={null}
+                src={undefined}
                 alt={posUser.firstName ?? ''}
               />
               <AvatarFallback>{posUser?.firstName?.[0]}</AvatarFallback>
