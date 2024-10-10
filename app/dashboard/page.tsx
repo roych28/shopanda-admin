@@ -15,6 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
+import { CustomersClient } from '@/components/tables/customer-tables/client';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -52,6 +53,7 @@ export default function DashboardPage() {
   const [fetchingData, setFetchingData] = useState(true);
   const [customersData, setCustomersData] = useState<any>(null);
   const [customersDataForPie, setCustomersDataForPie] = useState<any>(null);
+  const [topCustomers, setTopCustomers] = useState<any>(null);
 
   // Fetch all reports when the page loads
   useEffect(() => {
@@ -100,6 +102,8 @@ export default function DashboardPage() {
       ];
       setCustomersDataForPie(genderChartData);
       setFetchingData(false);
+
+      setTopCustomers(customersRes?.topCustomers);
     };
     fetchAllReports();
   }, []);
@@ -195,6 +199,19 @@ export default function DashboardPage() {
               </Card>
 
               {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
+
+              {topCustomers && 
+                <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <div>{`הלקוחות המובילים בקניות`}</div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="m-0 p-0">
+                  <CustomersClient data={topCustomers} />
+                </CardContent>    
+              </Card>
+                }
               {/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">

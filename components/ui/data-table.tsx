@@ -38,27 +38,27 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel()
   });
 
-  /* this can be used to get the selectedrows 
+  /* this can be used to get the selected rows 
   console.log("value", table.getFilteredSelectedRowModel()); */
 
   return (
-    <>
-      <Input
-        placeholder={`Search ${searchKey}...`}
+    <div dir="rtl" className="rtl">
+      {/*<Input
+        placeholder={`חיפוש לפי שם לקוח`}
         value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
         onChange={(event) =>
           table.getColumn(searchKey)?.setFilterValue(event.target.value)
         }
         className="w-full md:max-w-sm"
-      />
+      />*/}
       <ScrollArea className="h-[calc(80vh-220px)] rounded-md border md:h-[calc(80dvh-200px)]">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.slice().reverse().map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-right">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -78,7 +78,7 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().slice().reverse().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -94,7 +94,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  אין תוצאות.
                 </TableCell>
               </TableRow>
             )}
@@ -102,10 +102,10 @@ export function DataTable<TData, TValue>({
         </Table>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      {/*<div className="flex items-center justify-start space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} מתוך{' '}
+          {table.getFilteredRowModel().rows.length} שורה/ות נבחרו.
         </div>
         <div className="space-x-2">
           <Button
@@ -114,7 +114,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            הקודם
           </Button>
           <Button
             variant="outline"
@@ -122,10 +122,10 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            הבא
           </Button>
         </div>
-      </div>
-    </>
+      </div>*/}
+    </div>
   );
 }

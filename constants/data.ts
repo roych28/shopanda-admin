@@ -8,6 +8,23 @@ export type User = {
   verified: boolean;
   status: string;
 };
+
+export type Customer = {
+  uid: string;
+  customer_first_name: string;
+  customer_last_name: string;
+  customer_email: string;
+  customer_phone_number: string;
+  customer_profile_image: string;
+  customer_gender: string;
+  customer_nfc: string | null;
+  total_amount_spent: number;
+  last_salesman_first_name: string;
+  last_salesman_last_name: string;
+  last_transaction_date: string;
+};
+
+
 export const users: User[] = [
   {
     id: 1,
@@ -109,6 +126,7 @@ export type Employee = {
   job: string;
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
 };
+
 
 export const navItems: NavItem[] = [
   {
