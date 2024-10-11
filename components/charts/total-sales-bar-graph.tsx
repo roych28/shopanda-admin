@@ -22,6 +22,7 @@ interface TotalSalesGraphProps {
     transaction_count: string;
     total_revenue: string;
     average_transaction: string;
+    total_tip: string;
   }[];
 }
 

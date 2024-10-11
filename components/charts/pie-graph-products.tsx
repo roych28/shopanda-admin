@@ -20,7 +20,7 @@ const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'
 
 export function ProductPieCharts({ data }: ProductPieChartProps) {
   // Separate data by vendor
-  const vendors = [...new Set(data.map((item) => item.vendor_name))];
+  const vendors = Array.from(new Set(data.map((item) => item.vendor_name)));
 
   const pieCharts = vendors.map((vendorName, index) => {
     const vendorData = data.filter((item) => item.vendor_name === vendorName);
@@ -50,7 +50,7 @@ export function ProductPieCharts({ data }: ProductPieChartProps) {
                 cy="50%"
                 outerRadius={100}
                 fill="#8884d8"
-                label={({ name, value }) => `${name}: ${value}`}
+                label={({ name, value }) => (value >= 130 ? `${name}: ${value}` : '')}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
