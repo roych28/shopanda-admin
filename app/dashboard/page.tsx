@@ -17,6 +17,7 @@ import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
 import { CustomersClient } from '@/components/tables/customer-tables/client';
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
+import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -101,8 +102,6 @@ export default function DashboardPage() {
         { type: 'Other', displayName: t('other'), total_amount: customersRes?.customersData?.otherCount + (customersRes?.customersData?.unknownGenderCount), fill: '#0A0A0A' }
       ];
       setCustomersDataForPie(genderChartData);
-      setFetchingData(false);
-
       setTopCustomers(customersRes?.topCustomers);
 
       const formattedData = customersRes.totalSalesPerHour
@@ -133,6 +132,9 @@ export default function DashboardPage() {
         .sort((a, b) => new Date(a.hour).getTime() - new Date(b.hour).getTime());
 
       setSalesDataPerHour(formattedData);
+
+      setFetchingData(false);
+
     };
     fetchAllReports();
   }, []);
@@ -227,21 +229,45 @@ export default function DashboardPage() {
                 <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersData?.customersWithNfc}`}</div>
               </Card>
 
+              {/* Pairing Data */}
               {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
 
+              {/* 20 Top Customers */}
               {topCustomers && 
                 <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <div>{`הלקוחות המובילים בקניות`}</div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="m-0 p-0">
-                  <CustomersClient data={topCustomers} />
-                </CardContent>    
-              </Card>
-                }
-              {/*<Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div>{`הלקוחות המובילים בקניות`}</div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="m-0 p-0">
+                    <CustomersClient data={topCustomers} />
+                  </CardContent>    
+                </Card>
+              }
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
+              <div className="col-span-4">
+                { customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />}
+              </div>
+
+              <div className="col-span-4">
+                {salesDataPerHour && <SalesBarGraph
+                                        data={salesDataPerHour}
+                                        title="גרף מכירות לפי שעה"
+                                        description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
+                                      />}
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </PageContainer>
+  );
+}
+
+{/*<Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-xl font-medium">
                   {`Total Bonus Deposits - ${1}`}
@@ -254,24 +280,3 @@ export default function DashboardPage() {
                 </CardContent>
                 <PieGraphBonus/>
               </Card>*/}
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <div className="col-span-4">
-                {salesDataPerHour && <SalesBarGraph
-                                        data={salesDataPerHour}
-                                        title="גרף מכירות לפי שעה"
-                                        description="השוואת מספר העסקאות לפי שעה בין ספקים שונים"
-                                      />}
-              </div>
-            
-              <div className="col-span-4">
-                {/*<AreaGraph data={customersData.totalSalesPerHour} />*/}
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </PageContainer>
-  );
-}
