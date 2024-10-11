@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
 import { PieGraph } from '@/components/charts/pie-graph-total';
-import { PieGraphBonus } from '@/components/charts/pie-graph-bonus';
+import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
@@ -67,13 +67,6 @@ export default function DashboardPage() {
       const totalPosDepositAmount = parseFloat(deposits[3].total_amount);
       const totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
 
-      setRealMoneyReport({
-        totalDepositAmount,
-        totalWithoutPaymentAmount,
-        totalPosDepositAmount,
-        totalAmount
-      });
-
       // bonus
       const totalDepositBonus = parseFloat(deposits[0].total_bonus);
       const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
@@ -82,6 +75,8 @@ export default function DashboardPage() {
       
       const totalCredits = totalAmount + totalBonus;
       console.log(totalAmount, totalCredits);
+
+      
       setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
       const chartData = [
@@ -95,6 +90,15 @@ export default function DashboardPage() {
       const customersRes = await fetchReports('get-customer-data');
       console.log(customersRes);
       setCustomersData(customersRes);
+
+      const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
+      setRealMoneyReport({
+        totalDepositAmount,
+        totalWithoutPaymentAmount,
+        totalPosDepositAmount,
+        totalAmount,
+        creditsNotSpent: totalCredits - totalPurchase
+      });
 
       const genderChartData = [
         { type: 'Male', displayName: t('males'), total_amount: customersRes?.customersData?.maleCount, fill: '#666666' },
@@ -146,9 +150,9 @@ export default function DashboardPage() {
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
-        <div className="flex items-center justify-between space-y-2">
-          <div className="text-2xl font-bold tracking-tight">
-            {posUser?.username}
+        <div className="text-right">
+          <div className="text-2xl font-bold">
+            {posUser?.firstName} היי
           </div>
           {/*<div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
@@ -190,6 +194,7 @@ export default function DashboardPage() {
                 </CardContent>                
                 {depositReportForPie && <PieGraph chartData={depositReportForPie} title={t('deposits')}/>}
                 <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ${parseFloat(realMoneyReport.creditsNotSpent).toFixed(2)}`}</div>
               </Card>
 
               {/* Customers Data */}
@@ -259,6 +264,10 @@ export default function DashboardPage() {
                                         description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
                                       />}
               </div>
+              <div className="col-span-3">
+                { customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
+              </div>
+                  
             </div>
           </TabsContent>
         </Tabs>

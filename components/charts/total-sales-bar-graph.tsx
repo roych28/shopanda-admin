@@ -35,18 +35,21 @@ export function TotalSalesGraph({ data }: TotalSalesGraphProps) {
     <ul className="list-none space-y-1 text-right rtl">
       {data.map((vendor) => {
         const averageTransaction = parseFloat(vendor.average_transaction).toFixed(2);
+        const totalTip = parseFloat(vendor.total_tip).toFixed(2); // Format the total tip to 2 decimal places
         return (
           <li key={vendor.vendor_id} className="relative pr-1">
             <span className="absolute right-0 mr-2">•</span>
             <div className="mr-6">
               <strong>{vendor.vendor_name}</strong>: {vendor.transaction_count} עסקאות,
-              הכנסה כוללת של ₪{vendor.total_revenue}, עסקה ממוצעת ₪{averageTransaction}
+              הכנסה כוללת של ₪{vendor.total_revenue}, עסקה ממוצעת ₪{averageTransaction},
+              טיפ כולל ₪{totalTip}
             </div>
           </li>
         );
       })}
     </ul>
   );
+
 
   // Prepare pie chart data for total revenue distribution
   const pieData = data.map((vendor) => ({

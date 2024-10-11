@@ -27,5 +27,6 @@
   "CustomersWithNfc": "Customers With NFC",
   "pairingChartTitle": "Pairing Chart By Hour",
   "cacheOrBit": "Cash Or Bit",
-  "posDeposit": "POS Deposit"
+  "posDeposit": "POS Deposit",
+  "creditsNotSpent": "Credits Not Spent"
 }
