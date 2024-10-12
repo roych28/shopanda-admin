@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { CustomersClient } from '@/components/tables/customer-tables/client';
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
+import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -152,7 +153,7 @@ export default function DashboardPage() {
       <div className="space-y-2">
         <div className="text-right">
           <div className="text-2xl font-bold">
-            {posUser?.firstName} היי
+          היי {posUser?.firstName} 
           </div>
           {/*<div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
@@ -256,7 +257,6 @@ export default function DashboardPage() {
               <div className="col-span-4">
                 { customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />}
               </div>
-
               <div className="col-span-4">
                 {salesDataPerHour && <SalesBarGraph
                                         data={salesDataPerHour}
@@ -264,10 +264,12 @@ export default function DashboardPage() {
                                         description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
                                       />}
               </div>
-              <div className="col-span-3">
+              <div className="col-span-4">
                 { customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
               </div>
-                  
+              <div className="col-span-4">
+                { customersData?.productsSalesByHour && <ProductSalesByHour data={customersData.productsSalesByHour} />}
+                </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -275,17 +277,3 @@ export default function DashboardPage() {
     </PageContainer>
   );
 }
-
-{/*<Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-xl font-medium">
-                  {`Total Bonus Deposits - ${1}`}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                <pre className="text-blue-500">{`App Bonus Deposits - ${1}`}</pre>
-                <pre className="text-yellow-500">{`Info Bonus Deposits- ${2}`}</pre>
-                <pre className="text-red-500">{`POS Bonus Deposits- ${3}`}</pre>
-                </CardContent>
-                <PieGraphBonus/>
-              </Card>*/}
