@@ -47,7 +47,7 @@ const CustomLabelLine = (props: any) => {
 
   // Only show the label line if the value is greater than 100
   if (value < 100) {
-    return null;
+    return <></>;
   }
 
   const RADIAN = Math.PI / 180;
@@ -106,7 +106,7 @@ export function ProductPieCharts({ data }: ProductPieChartProps) {
 
                   return <CustomLabel x={x} y={y} name={name} value={value} fill={fill} midAngle={midAngle} />;
                 }}
-                labelLine={CustomLabelLine} // Use the custom labelLine function
+                labelLine={CustomLabelLine}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
