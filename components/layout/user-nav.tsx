@@ -13,9 +13,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { useDataContext } from '@/lib/DataProvider';
+import { useTranslations } from 'next-intl';
 
 export function UserNav() {
   const { posUser, signOut } = useDataContext();
+  const t = useTranslations();
   console.log('posUser', posUser);
   if (posUser) {
     return (
@@ -44,9 +46,9 @@ export function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            {/*<DropdownMenuItem>
               Profile
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
               Billing
@@ -55,8 +57,8 @@ export function UserNav() {
             <DropdownMenuItem>
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
+            </DropdownMenuItem>*/}
+            <DropdownMenuItem>{t('Version')} {process.env.NEXT_PUBLIC_APP_VERSION}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>
