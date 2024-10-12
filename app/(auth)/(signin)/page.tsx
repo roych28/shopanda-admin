@@ -36,7 +36,7 @@ export default function AuthenticationPage() {
         }
 
         // Check if the user has admin role
-        if (data.user.role !== 'admin') {
+        if (data.user.role !== 'admin' && data.user.role !== 'owner') {
           setErrorMessage(t('adminOnly'));
           return;
         }

@@ -1,5 +1,3 @@
-
-
 // @ts-nocheck
 import React, { useState, useEffect, useContext, createContext, ReactNode } from "react";
 
@@ -9,6 +7,7 @@ interface DataContextType {
   accessToken: string | null;
   setAuthData: any;
   setLoading: (value: boolean) => void;
+  signOut: () => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -20,58 +19,6 @@ export const useDataContext = () => {
   }
   return context;
 };
-/*
-const fetchCustomerData = async (user: User, token: string) => {
-  try {
-    const response = await fetch(`${SERVER_API_BASE_URL}/api/customer/get/${user.uid}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
-      }
-    });
-    if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error("Customer not found");
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to fetch customer data");
-      }
-    }
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    console.error(`Error fetching customer data: ${error.message}`);
-    throw error;
-  }
-};
-
-const createCustomer = async (user: User, token: string) => {
-  try {
-    const response = await fetch(`${SERVER_API_BASE_URL}/api/customer/create`, {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        uid: user.uid,
-        email: user.email,
-        // Add other customer details as needed
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to create customer");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    console.error(`Error creating customer: ${error.message}`);
-    throw error;
-  }
-};*/
 
 export const DataContextProvider = ({ children }: { children: ReactNode }) => {
   const [posUser, setPosUser] = useState<any | null>(null);
@@ -88,9 +35,9 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
         setAuthData(dataItem.user, dataItem.token);
       } else {
         console.log('no user saved in localstorage');
-      }
+      }   
       
-      
+      setLoading(false);
   }, []);
 
   const setAuthData = (posUser: any, token: any) => {
@@ -100,8 +47,15 @@ export const DataContextProvider = ({ children }: { children: ReactNode }) => {
 
   }
 
+  const signOut = () => {
+    setPosUser(null);
+    setAccessToken(null);
+    setLoading(false);
+    localStorage.removeItem('data');
+  }
+
   return (
-    <DataContext.Provider value={{ posUser, loading, accessToken, setAuthData, setLoading}}>
+    <DataContext.Provider value={{ posUser, loading, accessToken, setAuthData, setLoading, signOut}}>
       {children}
     </DataContext.Provider>
   );

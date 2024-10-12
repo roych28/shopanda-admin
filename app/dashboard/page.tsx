@@ -19,20 +19,23 @@ import { CustomersClient } from '@/components/tables/customer-tables/client';
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
+import { useRouter } from 'next/navigation';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
 
-// Fetch all reports
-const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-09-28') => {
+const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-09-28', vendorId = undefined) => {
   try {
-    const response = await fetch(
-      `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`,
+    const reportUrl = vendorId ? `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&vendorId=${vendorId}` : 
+    `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+    
+    const response = await fetch(reportUrl,
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       }
     );
+    
     const data = await response.json();
     if (!response.ok) {
       throw new Error(`Failed to fetch ${endpoint} report`);
@@ -46,8 +49,9 @@ const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-
 };
 
 export default function DashboardPage() {
-  const { posUser } = useDataContext();
+  const { posUser, loading } = useDataContext();
   const t = useTranslations();
+  const router = useRouter();
 
   const [realMoneyReport, setRealMoneyReport] = useState<any>(null);
   const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
@@ -141,8 +145,14 @@ export default function DashboardPage() {
       setFetchingData(false);
 
     };
-    fetchAllReports();
-  }, []);
+
+    if(!loading && posUser) {
+      fetchAllReports();
+    }else if(!loading && !posUser) {
+      router.push('/');
+    }
+    
+  }, [loading, posUser]);
 
   if(fetchingData) {
     return <div>{t('loading')}</div>

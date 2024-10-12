@@ -11,11 +11,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
 import { useDataContext } from '@/lib/DataProvider';
-import { signOut, useSession } from 'next-auth/react';
 
 export function UserNav() {
-  const { posUser } = useDataContext();
+  const { posUser, signOut } = useDataContext();
   console.log('posUser', posUser);
   if (posUser) {
     return (
