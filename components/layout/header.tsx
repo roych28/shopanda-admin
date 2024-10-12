@@ -7,8 +7,8 @@ import Image from 'next/image';
 export default function Header() {
   return (
     <header className="sticky inset-x-0 top-0 w-full">
-      <nav className="flex items-center justify-between px-4 py-2 md:justify-end">
-      <div className={cn('block lg:!hidden flex items-center space-x-6')}>
+      <nav className="flex items-center justify-between px-4 py-2">
+      <div className={cn('block flex items-center space-x-6')}>
         <UserNav />
         <div/>
         <ThemeToggle />
