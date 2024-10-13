@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 import {
   Card,
@@ -17,8 +17,6 @@ import {
   ChartTooltipContent
 } from '@/components/ui/chart';
 
-//export const description = 'Pairings per hour bar chart';
-
 const chartConfig = {
   views: {
     label: 'Pairings per Hour'
@@ -32,7 +30,7 @@ const chartConfig = {
 interface BarGraphProps {
   data: {
     hour: string;
-    hourly_count: number;
+    hourly_count: string; // String based on your data
   }[];
   title: string;
   description: string;
@@ -40,6 +38,20 @@ interface BarGraphProps {
 
 export function BarGraph({ data, title, description }: BarGraphProps) {
   const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>('hourly_count');
+
+  // Compute the cumulative pairings till each hour
+  const dataWithCumulative = React.useMemo(() => {
+    let cumulativeSum = 0;
+    return data.map((item) => {
+      const hourlyCount = +item.hourly_count; // Convert string to number
+      cumulativeSum += hourlyCount;
+      return {
+        ...item,
+        hourly_count: hourlyCount,
+        cumulative_count: cumulativeSum, // Add cumulative count
+      };
+    });
+  }, [data]);
 
   const total = React.useMemo(
     () => ({
@@ -56,6 +68,8 @@ export function BarGraph({ data, title, description }: BarGraphProps) {
           <CardDescription>
             {description}
           </CardDescription>
+          {/* Add the total count of pairings */}
+          <div className="text-lg font-semibold text-gray-700">{`סך הכל צימודים: ${total.hourly_count}`}</div>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
@@ -65,7 +79,7 @@ export function BarGraph({ data, title, description }: BarGraphProps) {
         >
           <BarChart
             accessibilityLayer
-            data={data}
+            data={dataWithCumulative}
             margin={{
               left: 0,
               right: 0
@@ -88,10 +102,11 @@ export function BarGraph({ data, title, description }: BarGraphProps) {
                 });
               }}
             />
+            <YAxis />
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[150px]"
+                  className="w-[160px]"
                   nameKey="hourly_count"
                   labelFormatter={(value) => {
                     const date = new Date(value);
@@ -104,6 +119,11 @@ export function BarGraph({ data, title, description }: BarGraphProps) {
                       hour12: false,
                       timeZone: 'Asia/Jerusalem'
                     });
+                  }}
+                  formatter={(value, name, props) => {
+                    const hourlyCount = props.payload.hourly_count;
+                    const cumulativeCount = props.payload.cumulative_count;
+                    return `צימודים לשעה: ${hourlyCount}\r\nסך הכל צימודים עד עכשיו: ${cumulativeCount}`;
                   }}
                 />
               }

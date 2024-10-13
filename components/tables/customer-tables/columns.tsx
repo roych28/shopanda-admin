@@ -19,7 +19,6 @@ export const columns: ColumnDef<Customer>[] = [
         </Avatar>
       </div>
     ),
-    // headerClassName: 'text-center',
   },
   {
     accessorKey: 'customerName',
@@ -29,29 +28,23 @@ export const columns: ColumnDef<Customer>[] = [
         {`${row.original.customerFirstName} ${row.original.customerLastName}`}
       </div>
     ),
-    //headerClassName: 'font-semibold text-gray-700',
-    //cellClassName: 'text-gray-800',
   },
-  /*{
-    accessorKey: 'customerEmail',
-    header: 'אימייל',
-    cell: ({ row }) => (
-      <div className="truncate text-left text-gray-700" style={{ maxWidth: '170px' }}>
-        {row.original.customerEmail}
-      </div>
-    ),
-    //headerClassName: 'text-right font-semibold text-gray-700',
-    //cellClassName: 'text-right text-gray-800',
-  },*/
   {
     accessorKey: 'totalAmountSpent',
-    header: 'סה״כ הוצאות',
+    header: 'סה״כ הוצאות בקרדיטים',
     cell: ({ row }) => (
-      <div className="truncate text-right font-semibold text-gray-800" >
-        ₪{row.original.totalAmountSpent}
+      <div className="flex items-center justify-end">
+        <Image
+          src="/panda_coin.png"
+          alt="Panda Coin"
+          width={16}
+          height={16}
+          className="rounded-full"
+        />
+        <span className="truncate font-semibold text-gray-800 ml-1">
+          {row.original.totalAmountSpent}
+        </span>
       </div>
     ),
-    //headerClassName: 'text-right font-semibold text-gray-700',
-    //cellClassName: '',
   },
 ];
