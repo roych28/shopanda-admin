@@ -79,31 +79,77 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
                   return date.toLocaleTimeString('he-IL', {
                     hour: '2-digit',
                     minute: '2-digit',
-                    hour12: false,  // This ensures 24-hour format
+                    hour12: false,
                     timeZone: 'Asia/Jerusalem'
                   });
                 }}
               />
               <YAxis />
               <Tooltip
-                content={
-                  <ChartTooltipContent
-                    className="w-[150px]"
-                    nameKey="hour"
-                    labelFormatter={(value) => {
-                      const date = new Date(value);
-                      return date.toLocaleDateString('he-IL', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: false,
-                        timeZone: 'Asia/Jerusalem'
-                      });
-                    }}
-                  />
-                }
+                formatter={(value, name, props) => {
+                  const vendorARevenue = props.payload.vendorA_revenue;
+                  const vendorBRevenue = props.payload.vendorB_revenue;
+
+                  let vendorColor = '';
+
+                  if (name === chartConfig.vendorA.label) {
+                    vendorColor = chartConfig.vendorA.color;
+
+                    // Skip showing tooltip if revenue is 0
+                    if (vendorARevenue === 0) return null;
+
+                    // Return plain text with transactions count for vendorA
+                    return `עסקאות: ${value}`;
+                  } else if (name === chartConfig.vendorB.label) {
+                    vendorColor = chartConfig.vendorB.color;
+
+                    // Skip showing tooltip if revenue is 0
+                    if (vendorBRevenue === 0) return null;
+
+                    // Return plain text with transactions count for vendorB
+                    return `עסקאות: ${value}`;
+                  }
+                }}
+                content={({ payload, label }) => {
+                  if (!payload || payload.length === 0) return null;
+
+                  const date = new Date(label);
+                  const formattedDate = date.toLocaleDateString('he-IL', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    timeZone: 'Asia/Jerusalem',
+                  });
+
+                  return (
+                    <div className="bg-white p-3 rounded shadow-md text-right">
+                      {/* Date Title */}
+                      <div className="font-semibold mb-2">{formattedDate}</div>
+                      {/* Transaction Details */}
+                      {payload.map((item, index) => {
+                        let vendorColor = '';
+                        if (item.name === chartConfig.vendorA.label) {
+                          vendorColor = chartConfig.vendorA.color;
+                        } else if (item.name === chartConfig.vendorB.label) {
+                          vendorColor = chartConfig.vendorB.color;
+                        }
+
+                        return (
+                          <div key={index} className="flex items-center justify-end">
+                            <span>{`עסקאות: ${item.value}`}</span>
+                            <div
+                              className="inline-block w-3 h-3 ml-2"
+                              style={{ backgroundColor: vendorColor }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                }}
               />
               <Legend
                 formatter={(value) =>

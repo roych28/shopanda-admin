@@ -82,7 +82,6 @@ export default function DashboardPage() {
       const totalCredits = totalAmount + totalBonus;
       console.log(totalAmount, totalCredits);
 
-      
       setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
       const chartData = [
@@ -253,11 +252,8 @@ export default function DashboardPage() {
                 {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')} />}
                 <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${formatNumber(customersData?.customersData?.customersWithNfc)}`}</div>
               </Card>
-
-
               {/* Pairing Data */}
               {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
-
               {/* 20 Top Customers */}
               {topCustomers && 
                 <Card>
@@ -288,7 +284,7 @@ export default function DashboardPage() {
                 { customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
               </div>
               <div className="col-span-4">
-                { customersData?.productsSalesByHour && <ProductSalesByHour data={customersData.productsSalesByHour} />}
+                {/* customersData?.productsSalesByHour && <ProductSalesByHour data={customersData.productsSalesByHour} />*/}
                 </div>
             </div>
           </TabsContent>
