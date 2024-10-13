@@ -12,6 +12,7 @@
   "Loading":"Loading",
   "errorOccurred":"An error occurred",
   "totalIncome": "Total Income",
+  "perChannelIncome": "Income Per Channel",
   "siteIncome": "Site Credit Purchases",
   "cacheIncome": "Cash Or Bit Credit Purchases",
   "directIncome": "Direct Credit Purchases",

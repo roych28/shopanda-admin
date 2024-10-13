@@ -28,7 +28,7 @@ const chartConfig = {
   }
 };
 
-export function PieGraph({chartData, title} :any ) {
+export function PieGraphTotal({chartData, title} :any ) {
   const totalDeposits = React.useMemo(() => {
     return chartData?.reduce((acc : number, curr: any) => acc + curr.total_amount, 0);
   }, [chartData]);

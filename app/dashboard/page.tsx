@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
 import { BarGraph } from '@/components/charts/bar-graph';
-import { PieGraph } from '@/components/charts/pie-graph-total';
+import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
@@ -20,6 +20,7 @@ import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
 import { useRouter } from 'next/navigation';
+import { formatNumber } from '@/lib/utils';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -35,7 +36,7 @@ const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-
         headers: { 'Content-Type': 'application/json' },
       }
     );
-    
+
     const data = await response.json();
     if (!response.ok) {
       throw new Error(`Failed to fetch ${endpoint} report`);
@@ -85,9 +86,9 @@ export default function DashboardPage() {
       setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
       const chartData = [
-        { type: 'Deposit', displayName: t('deposits'), total_amount: totalDepositAmount, fill: '#49E6A1' },
-        { type: 'Without Payment', displayName: t('cacheOrBit'), total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
-        { type: 'POS Deposit', displayName: t('posDeposit'), total_amount: totalPosDepositAmount, fill: '#F64894' }
+        { type: 'Deposit', displayName: t('siteIncome'), total_amount: totalDepositAmount, fill: '#49E6A1' },
+        { type: 'Without Payment', displayName: t('cacheIncome'), total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
+        { type: 'POS Deposit', displayName: t('directIncome'), total_amount: totalPosDepositAmount, fill: '#F64894' }
       ];
 
       setDepositReportForPie(chartData);
@@ -165,10 +166,6 @@ export default function DashboardPage() {
           <div className="text-2xl font-bold">
           היי {posUser?.firstName} 
           </div>
-          {/*<div className="hidden items-center space-x-2 md:flex">
-            <CalendarDateRangePicker />
-            <Button>Download</Button>
-          </div>*/}
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           {/*<TabsList>
@@ -180,33 +177,42 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <div>{`${t('totalIncome')} - ${realMoneyReport.totalAmount}`}</div>
+                    <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport.totalAmount)}`}</div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('siteIncome')} - ${realMoneyReport.totalDepositAmount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieOne"></div>
-                      </div>
-                    </pre>
-                    <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('cacheIncome')} - ${realMoneyReport.totalWithoutPaymentAmount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
-                      </div>
-                    </pre>
-                    <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('directIncome')} - ${realMoneyReport.totalPosDepositAmount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieThree"></div>
-                      </div>
-                    </pre>
-                </CardContent>                
-                {depositReportForPie && <PieGraph chartData={depositReportForPie} title={t('deposits')}/>}
+                  <div className="text-right text-lg mb-4">{`${t('perChannelIncome')}`}</div>
+                  <table className="w-full text-right">
+                    <tbody>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalDepositAmount)}`}</td>
+                        <td className="px-2">{`${t('siteIncome')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieOne"></div>
+                        </td>
+                      </tr>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalWithoutPaymentAmount)}`}</td>
+                        <td className="px-2">{`${t('cacheIncome')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
+                        </td>        
+                      </tr>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalPosDepositAmount)}`}</td>
+                        <td className="px-2">{`${t('directIncome')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieThree"></div>
+                        </td>          
+                      </tr>
+                    </tbody>
+                  </table>
+                </CardContent>
+                {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
                 <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ${parseFloat(realMoneyReport.creditsNotSpent).toFixed(2)}`}</div>
+                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
               </Card>
+
 
               {/* Customers Data */}
               <Card>
