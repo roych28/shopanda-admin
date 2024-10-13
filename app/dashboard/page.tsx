@@ -94,7 +94,6 @@ export default function DashboardPage() {
       setDepositReportForPie(chartData);
 
       const customersRes = await fetchReports('get-customer-data');
-      console.log(customersRes);
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
