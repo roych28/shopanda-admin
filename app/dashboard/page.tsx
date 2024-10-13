@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { AreaGraph } from '@/components/charts/area-graph';
-import { BarGraph } from '@/components/charts/bar-graph';
+import { BarGraph } from '@/components/charts/attach-chip-bar-graph';
 import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
