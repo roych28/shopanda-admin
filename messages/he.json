@@ -18,8 +18,8 @@
   "directIncome": "רכישת קרדיט ישירות",
   "creditToRealMoneyRatio": " יחס כסף אמיתי לקרדיט",
   "loading":"טוען...",
-  "customersData":"נתוני לקוחות",
-  "registeredCustomers":"לקוחות רשומים",
+  "customersData":"לקוחות",
+  "registeredCustomers":"פרופילים רשומים",
   "males":"גברים",
   "females":"נשים",
   "other":"אחר",
@@ -29,5 +29,6 @@
   "pairingChartTitle":"גרף צימוד לפי שעה",
   "cacheOrBit":"מזומן או ביט",
   "posDeposit":"הפקדה בקופה",
-  "creditsNotSpent":"קרדיטים שלא נוצלו"
+  "creditsNotSpent":"קרדיטים שלא נוצלו",
+  "version":"גרסה"
 }

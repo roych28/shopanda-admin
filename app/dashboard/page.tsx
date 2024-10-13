@@ -210,46 +210,51 @@ export default function DashboardPage() {
                 </CardContent>
                 {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
                 <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
               </Card>
-
-
               {/* Customers Data */}
               <Card>
                 <CardHeader>
                   <CardTitle>
-                    <div>{`${t('customersData')}`}</div>
+                    <div className="text-xl text-center">{`${t('customersData')}`}</div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('registeredCustomers')} - ${customersData?.customersData?.customersRegistered}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieFour"></div>
-                      </div>
-                    </pre>
-                    <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('males')} - ${customersData?.customersData?.maleCount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieFive"></div>
-                      </div>
-                    </pre>
-                    <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('females')} - ${customersData?.customersData?.femaleCount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
-                      </div>
-                    </pre>
-                    <pre>
-                      <div className={`flex items-center ${isRTL() ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <div className="mr-2">{` ${t('other')} - ${customersData?.customersData?.otherCount + customersData?.customersData?.unknownGenderCount}`}</div>
-                        <div className="w-3 h-3 rounded-full bg-pieSix"></div>
-                      </div>
-                    </pre>
-                </CardContent>    
-                {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')}/>}
-                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${customersData?.customersData?.customersWithNfc}`}</div>
+                  <table className="w-full text-right">
+                    <tbody>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`${formatNumber(customersData?.customersData?.customersRegistered)}`}</td>
+                        <td className="px-2">{`${t('registeredCustomers')}`}</td>
+                        <td className="px-2 w-3" />
+                      </tr>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`${formatNumber(customersData?.customersData?.maleCount)}`}</td>
+                        <td className="px-2">{`${t('males')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieFive"></div>
+                        </td>
+                      </tr>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`${formatNumber(customersData?.customersData?.femaleCount)}`}</td>
+                        <td className="px-2">{`${t('females')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
+                        </td>
+                      </tr>
+                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                        <td className="px-2">{`${formatNumber(customersData?.customersData?.otherCount + customersData?.customersData?.unknownGenderCount)}`}</td>
+                        <td className="px-2">{`${t('other')}`}</td>
+                        <td className="px-2 w-3">
+                          <div className="w-3 h-3 rounded-full bg-pieSix"></div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </CardContent>
+                {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')} />}
+                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${formatNumber(customersData?.customersData?.customersWithNfc)}`}</div>
               </Card>
+
 
               {/* Pairing Data */}
               {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}

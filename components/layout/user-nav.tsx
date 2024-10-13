@@ -58,7 +58,7 @@ export function UserNav() {
               Settings
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>*/}
-            <DropdownMenuItem>{t('Version')} {process.env.NEXT_PUBLIC_APP_VERSION}</DropdownMenuItem>
+            <DropdownMenuItem>{t('version')} {process.env.NEXT_PUBLIC_APP_VERSION}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

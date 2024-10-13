@@ -29,5 +29,6 @@
   "pairingChartTitle": "Pairing Chart By Hour",
   "cacheOrBit": "Cash Or Bit",
   "posDeposit": "POS Deposit",
-  "creditsNotSpent": "Credits Not Spent"
+  "creditsNotSpent": "Credits Not Spent",
+  "version": "Version"
 }
