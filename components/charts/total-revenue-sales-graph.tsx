@@ -72,7 +72,7 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
         </div>
       </CardHeader>
       <CardContent className="px-2">
-        <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full sm:h-[500px]">
+        <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full sm:h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={processedData}

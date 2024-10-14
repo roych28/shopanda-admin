@@ -31,7 +31,7 @@ import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
 
-const fetchReports = async (endpoint, startDate = '2024-09-26', endDate = '2024-09-28', vendorId = undefined) => {
+const fetchReports = async (endpoint, vendorId = undefined, startDate = '2024-09-26', endDate = '2024-09-28') => {
   try {
     const reportUrl = vendorId ? `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}&vendorId=${vendorId}` : 
     `${SERVER_API_BASE_URL}/pos/reports/${endpoint}?startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
@@ -76,12 +76,12 @@ export default function DashboardPage() {
     },
     {
       details: "עמלת מסוף",
-      agreement: "טרנזקציה 10 אג + 150 שח לחודש",
+      agreement: "טרנזקציה 10 אג + ₪150 לחודש",
       total: "₪339.5", // 150 + (0.1 * (546+261+1254+876+71+16)) = 189.5 + 150 = 339.5
     },
     {
       details: "התקנה",
-      agreement: "350 ש״ח",
+      agreement: "₪350",
       total: "₪0",
     },
     {
@@ -91,17 +91,17 @@ export default function DashboardPage() {
     },
     {
       details: "עלויות צמידים",
-      agreement: "כמות צמידים * 5 ש״ח",
+      agreement: "כמות צמידים * ₪5",
       total: "₪0",
     },
     {
       details: "נציגי שטח",
-      agreement: "כמות נציגים * 80 ש״ח לשעה",
+      agreement: "כמות נציגים * ₪80 לשעה",
       total: "₪0",
     },
     {
       details: "השכרת חומרה",
-      agreement: "כמות תחנות עבודה * 150 ש״ח לחודש",
+      agreement: "כמות תחנות עבודה * ₪150 לחודש",
       total: "₪0",
     },
     {
@@ -109,49 +109,63 @@ export default function DashboardPage() {
       agreement: "הכחשות עסקה, זיכויים, תעריפון חברת האשראי",
       total: "₪256",
     },
-    
+    {
+      details: "סיכום עמלות והחזרים",
+      agreement: "צפי הפקדה נטו",
+      total: "₪137103.3", // 145671 - 944.65 - 339.5 - 7283.55 = 137103.3
+    },
   ]);
   // Fetch all reports when the page loads
   useEffect(() => {
     const fetchAllReports = async () => {
-      const deposits = await fetchReports('deposits');
+        let totalDepositAmount =0;
+        let totalWithoutPaymentAmount = 0;
+        let totalPosDepositAmount = 0;
+        let totalAmount = 0;
+        let totalCredits = 1;
 
-      // real money 
-      const totalDepositAmount = parseFloat(deposits[0].total_amount);
-      const totalWithoutPaymentAmount = parseFloat(deposits[1].total_amount);
-      const totalPosDepositAmount = parseFloat(deposits[3].total_amount);
-      const totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
+      if(!posUser?.vendorId) {
+        const deposits = await fetchReports('deposits');
 
-      // bonus
-      const totalDepositBonus = parseFloat(deposits[0].total_bonus);
-      const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
-      const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
-      const totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
-      
-      const totalCredits = totalAmount + totalBonus;
-      console.log(totalAmount, totalCredits);
+        // real money 
+        totalDepositAmount = parseFloat(deposits[0].total_amount);
+        totalWithoutPaymentAmount = parseFloat(deposits[1].total_amount);
+        totalPosDepositAmount = parseFloat(deposits[3].total_amount);
+        totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
 
-      setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
+        // bonus
+        const totalDepositBonus = parseFloat(deposits[0].total_bonus);
+        const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
+        const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
+        const totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
+        
+        totalCredits = totalAmount + totalBonus;
+        console.log(totalAmount, totalCredits);
 
-      const chartData = [
-        { type: 'Deposit', displayName: t('siteIncome'), total_amount: totalDepositAmount, fill: '#49E6A1' },
-        { type: 'Without Payment', displayName: t('cacheIncome'), total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
-        { type: 'POS Deposit', displayName: t('directIncome'), total_amount: totalPosDepositAmount, fill: '#F64894' }
-      ];
+        setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
-      setDepositReportForPie(chartData);
+        const chartData = [
+          { type: 'Deposit', displayName: t('siteIncome'), total_amount: totalDepositAmount, fill: '#49E6A1' },
+          { type: 'Without Payment', displayName: t('cacheIncome'), total_amount: totalWithoutPaymentAmount, fill: '#FDF956' },
+          { type: 'POS Deposit', displayName: t('directIncome'), total_amount: totalPosDepositAmount, fill: '#F64894' }
+        ];
 
-      const customersRes = await fetchReports('get-customer-data');
+        setDepositReportForPie(chartData);
+      }
+
+      const customersRes = await fetchReports('get-customer-data', posUser?.vendorId);
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
-      setRealMoneyReport({
-        totalDepositAmount,
-        totalWithoutPaymentAmount,
-        totalPosDepositAmount,
-        totalAmount,
-        creditsNotSpent: totalCredits - totalPurchase
-      });
+      if(!posUser?.vendorId) {
+        setRealMoneyReport({
+          totalDepositAmount,
+          totalWithoutPaymentAmount,
+          totalPosDepositAmount,
+          totalAmount,
+          creditsNotSpent: totalCredits - totalPurchase
+        });
+      }
 
       const genderChartData = [
         { type: 'Male', displayName: t('males'), total_amount: customersRes?.customersData?.maleCount, fill: '#666666' },
@@ -202,6 +216,10 @@ export default function DashboardPage() {
     
   }, [loading, posUser]);
 
+  const isSuperAdmin = (user) => {
+    return user?.role === 'owner' || user?.role === 'super_admin';
+  }
+
   if(fetchingData) {
     return <div>{t('loading')}</div>
   }
@@ -221,7 +239,7 @@ export default function DashboardPage() {
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {/* Total Deposits */}
-              <Card>
+              {isSuperAdmin(posUser) && <Card>
                 <CardHeader>
                   <CardTitle>
                     <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport.totalAmount)}`}</div>
@@ -255,11 +273,8 @@ export default function DashboardPage() {
                     </tbody>
                   </table>
                   {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
-                  
-                    <div className="text-right text-lg font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                    <div className="text-right text-lg font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
-                 
-                  
+                  <div className="text-center text-md font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                  <div className="text-center text-md font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
                 </CardContent>
                 <CardFooter>
                   <Accordion
@@ -278,10 +293,10 @@ export default function DashboardPage() {
                     </AccordionItem>
                   </Accordion>
                 </CardFooter>
-              </Card>
+              </Card>}
               
               {/* Customers Data */}
-              <Card>
+              {isSuperAdmin(posUser) && <Card>
                 <CardHeader>
                   <CardTitle>
                     <div className="text-xl text-center">{`${t('customersData')}`}</div>
@@ -321,11 +336,11 @@ export default function DashboardPage() {
                 </CardContent>
                 {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')} />}
                 <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${formatNumber(customersData?.customersData?.customersWithNfc)}`}</div>
-              </Card>
+              </Card>}
               {/* Pairing Data */}
-              {customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
+              {isSuperAdmin(posUser) && customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
               {/* 20 Top Customers */}
-              {topCustomers && 
+              {isSuperAdmin(posUser) &&   topCustomers && 
                 <Card>
                   <CardHeader>
                     <CardTitle>

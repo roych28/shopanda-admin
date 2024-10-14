@@ -55,7 +55,7 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
       <CardContent className="px-2">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[300px] w-full sm:h-[500px]"
+          className="aspect-auto h-[300px] w-full sm:h-[400px]"
         >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
