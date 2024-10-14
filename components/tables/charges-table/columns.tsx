@@ -7,7 +7,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'details',
     header: 'פירוט',
     cell: ({ row }) => (
-      <div className="text-right text-xs text-gray-700">
+      <div className="text-right text-xs text-gray-400">
         {row.original.details}
       </div>
     ),
@@ -16,7 +16,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'agreement',
     header: 'הסכם',
     cell: ({ row }) => (
-      <div className="text-right text-xs text-gray-700">
+      <div className="text-right text-xs text-gray-400">
         {row.original.agreement}
       </div>
     ),
@@ -25,7 +25,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: 'total',
     header: 'סה"כ',
     cell: ({ row }) => (
-      <div className="text-right text-xs text-gray-700">
+      <div className="text-right text-xs text-gray-400">
         {row.original.total}
       </div>
     ),

@@ -72,43 +72,42 @@ export default function DashboardPage() {
     {
       details: "עמלת סליקה",
       agreement: "0.89", 
-      total: "סה״כ 944.65 ש״ח", // (83000 + 23141) * 0.0089 = 944.65
-      //notes: "מעתה לאפשר חלוקה עם גלעד על כל מה שמעל",
+      total: "₪944.65", // (83000 + 23141) * 0.0089 = 944.65
     },
     {
       details: "עמלת מסוף",
       agreement: "טרנזקציה 10 אג + 150 שח לחודש",
-      total: "סה״כ 339.5 ש״ח", // 150 + (0.1 * (546+261+1254+876+71+16)) = 189.5 + 150 = 339.5
+      total: "₪339.5", // 150 + (0.1 * (546+261+1254+876+71+16)) = 189.5 + 150 = 339.5
     },
     {
       details: "התקנה",
       agreement: "350 ש״ח",
-      total: "סה״כ 0 ש״ח",
+      total: "₪0",
     },
     {
       details: "עמלת שרות וטכנולוגיה",
       agreement: "5%",
-      total: "סה״כ 7283.55 ש״ח", // 0.05 * 145671 = 7283.55
+      total: "₪7283.55", // 0.05 * 145671 = 7283.55
     },
     {
       details: "עלויות צמידים",
       agreement: "כמות צמידים * 5 ש״ח",
-      total: "סה״כ 0 ש״ח",
+      total: "₪0",
     },
     {
       details: "נציגי שטח",
       agreement: "כמות נציגים * 80 ש״ח לשעה",
-      total: "סה״כ 0 ש״ח",
+      total: "₪0",
     },
     {
       details: "השכרת חומרה",
       agreement: "כמות תחנות עבודה * 150 ש״ח לחודש",
-      total: "סה״כ 0 ש״ח",
+      total: "₪0",
     },
     {
       details: "עמלות נוספות",
       agreement: "הכחשות עסקה, זיכויים, תעריפון חברת האשראי",
-      total: "סה״כ 256 ש״ח",
+      total: "₪256",
     },
     
   ]);
@@ -256,8 +255,11 @@ export default function DashboardPage() {
                     </tbody>
                   </table>
                   {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
-                  <div className="text-center text-lg font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                  <div className="text-center text-lg font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                  
+                    <div className="text-right text-lg font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                    <div className="text-right text-lg font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                 
+                  
                 </CardContent>
                 <CardFooter>
                   <Accordion
