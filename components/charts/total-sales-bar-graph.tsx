@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { formatNumber } from '@/lib/utils';
 
 const chartConfig = {
   vendorA: {
@@ -32,7 +33,7 @@ export function TotalSalesGraph({ data }: TotalSalesGraphProps) {
   const totalRevenue = data.reduce((acc, vendor) => acc + parseFloat(vendor.total_revenue), 0).toFixed(2);
 
   // Format the description with vendor details
-  const description = (
+  const description = "";/*(
     <ul className="list-none space-y-1 text-right rtl">
       {data.map((vendor) => {
         const averageTransaction = parseFloat(vendor.average_transaction).toFixed(2);
@@ -49,7 +50,7 @@ export function TotalSalesGraph({ data }: TotalSalesGraphProps) {
         );
       })}
     </ul>
-  );
+  );*/
 
 
   // Prepare pie chart data for total revenue distribution
@@ -64,10 +65,9 @@ export function TotalSalesGraph({ data }: TotalSalesGraphProps) {
   return (
     <Card className="rtl">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6 text-right">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>
-            <div>{`סה"כ מכירות: ₪${totalRevenue}`}</div>
-            <div>{`סה"כ עסקאות: ${totalTransactions}`}</div>
+            <div className="text-center">{`סה"כ מכירות: ${totalRevenue}`}</div>
           </CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>

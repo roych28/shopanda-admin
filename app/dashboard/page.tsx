@@ -2,11 +2,6 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { AreaGraph } from '@/components/charts/area-graph';
-import { BarGraph } from '@/components/charts/attach-chip-bar-graph';
-import { PieGraphTotal } from '@/components/charts/pie-graph-total';
-import { ProductPieCharts } from '@/components/charts/pie-graph-products';
-import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
@@ -21,6 +16,13 @@ import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
 import { useRouter } from 'next/navigation';
 import { formatNumber } from '@/lib/utils';
+
+import { RevenueLineGraph } from '@/components/charts/total-revenue-sales-graph';
+import { AreaGraph } from '@/components/charts/area-graph';
+import { BarGraph } from '@/components/charts/attach-chip-bar-graph';
+import { PieGraphTotal } from '@/components/charts/pie-graph-total';
+import { ProductPieCharts } from '@/components/charts/pie-graph-products';
+import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -271,7 +273,8 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
-                { customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />}
+                { customersData?.totalSalesPerHour && <RevenueLineGraph data={customersData.totalSalesPerHour} />}
+                {/* customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />*/}
               </div>
               <div className="col-span-4">
                 {salesDataPerHour && <SalesBarGraph
