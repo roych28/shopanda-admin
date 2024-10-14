@@ -6,16 +6,20 @@ import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
-import { CustomersClient } from '@/components/tables/customer-tables/client';
+
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
 import { useRouter } from 'next/navigation';
 import { formatNumber } from '@/lib/utils';
+
+import { ChargesTable } from '@/components/tables/charges-table/client';
+import { CustomersClient } from '@/components/tables/customer-tables/client';
 
 import { RevenueLineGraph } from '@/components/charts/total-revenue-sales-graph';
 import { AreaGraph } from '@/components/charts/area-graph';
@@ -64,6 +68,50 @@ export default function DashboardPage() {
   const [customersDataForPie, setCustomersDataForPie] = useState<any>(null);
   const [topCustomers, setTopCustomers] = useState<any>(null);
   const [salesDataPerHour, setSalesDataPerHour] = useState<any>(null);
+  const [chargesData, setChargesData] = useState<any>([
+    {
+      details: "עמלת סליקה",
+      agreement: "0.89", 
+      total: "סה״כ 944.65 ש״ח", // (83000 + 23141) * 0.0089 = 944.65
+      //notes: "מעתה לאפשר חלוקה עם גלעד על כל מה שמעל",
+    },
+    {
+      details: "עמלת מסוף",
+      agreement: "טרנזקציה 10 אג + 150 שח לחודש",
+      total: "סה״כ 339.5 ש״ח", // 150 + (0.1 * (546+261+1254+876+71+16)) = 189.5 + 150 = 339.5
+    },
+    {
+      details: "התקנה",
+      agreement: "350 ש״ח",
+      total: "סה״כ 0 ש״ח",
+    },
+    {
+      details: "עמלת שרות וטכנולוגיה",
+      agreement: "5%",
+      total: "סה״כ 7283.55 ש״ח", // 0.05 * 145671 = 7283.55
+    },
+    {
+      details: "עלויות צמידים",
+      agreement: "כמות צמידים * 5 ש״ח",
+      total: "סה״כ 0 ש״ח",
+    },
+    {
+      details: "נציגי שטח",
+      agreement: "כמות נציגים * 80 ש״ח לשעה",
+      total: "סה״כ 0 ש״ח",
+    },
+    {
+      details: "השכרת חומרה",
+      agreement: "כמות תחנות עבודה * 150 ש״ח לחודש",
+      total: "סה״כ 0 ש״ח",
+    },
+    {
+      details: "עמלות נוספות",
+      agreement: "הכחשות עסקה, זיכויים, תעריפון חברת האשראי",
+      total: "סה״כ 256 ש״ח",
+    },
+    
+  ]);
   // Fetch all reports when the page loads
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -207,11 +255,29 @@ export default function DashboardPage() {
                       </tr>
                     </tbody>
                   </table>
+                  {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
+                  <div className="text-center text-lg font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                  <div className="text-center text-lg font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
                 </CardContent>
-                {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
-                <div className="text-center text-xl font-medium mb-4">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                <div className="text-center text-xl font-medium mb-4">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                <CardFooter>
+                  <Accordion
+                    type="single"
+                    collapsible
+                  >
+                    <AccordionItem value="item-1" className="!border-none">
+                      <AccordionTrigger className="flex flex-row justify-between !no-underline">
+                        <div className="flex-1 text-right text-lg font-bold">
+                          {`טבלת רווח ומעקב הפקדות`}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <ChargesTable data={chargesData} />
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </CardFooter>
               </Card>
+              
               {/* Customers Data */}
               <Card>
                 <CardHeader>
