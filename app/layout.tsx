@@ -12,8 +12,8 @@ import { auth } from '@/auth';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Shopanda Admin',
+  description: 'Shopanda Admin Dashboard',
 };
 
 export default async function RootLayout({
