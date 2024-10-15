@@ -38,27 +38,29 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
 
   // Format the description with vendor details as buttons that route with vendor_id
   const description = (
-    <ul className="list-none space-y-1 text-right rtl">
+    <div className="list-none space-y-1 text-right rtl">
       {data.map((vendor) => {
         const averageTransaction = parseFloat(vendor.average_transaction).toFixed(2);
         const totalTip = parseFloat(vendor.total_tip).toFixed(2);
         return (
-          <li key={vendor.vendor_id} className="relative pr-1">
+          <div key={vendor.vendor_id} className="relative pr-1">
             <button
-              onClick={() => router.push(`/current-page?vendorId=${vendor.vendor_id}`)}
+              onClick={() => router.push(`/dashboard?vendorId=${vendor.vendor_id}`)}
               className="text-blue-600 underline hover:text-blue-800"
             >
-              <span className="absolute right-0 mr-2">•</span>
-              <div className="mr-6">
-                <strong>{vendor.vendor_name}</strong>: {vendor.transaction_count} עסקאות,
-                הכנסה כוללת של ₪{vendor.total_revenue}, עסקה ממוצעת ₪{averageTransaction},
-                טיפ כולל ₪{totalTip}
+              <div className="mr-6 text-right">
+                <div>
+                  <strong>{vendor.vendor_name}</strong>: {vendor.transaction_count} עסקאות, הכנסה כוללת של {vendor.total_revenue}
+                </div>
+                <div>
+                  עסקה ממוצעת {averageTransaction}, טיפ כולל {totalTip}
+                </div>
               </div>
             </button>
-          </li>
+          </div>
         );
       })}
-    </ul>
+    </div>
   );
 
   // Prepare bar chart data for total revenue
@@ -75,7 +77,7 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>
-            <div className="text-center">{`סה"כ מכירות: ₪${totalRevenue}`}</div>
+            <div className="text-center">{`סה"כ מכירות: ${totalRevenue}`}</div>
           </CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
@@ -85,7 +87,7 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
           <BarChart data={barData}>
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip formatter={(value: number) => `₪${value.toFixed(2)}`} />
+            <Tooltip formatter={(value: number) => `${value.toFixed(2)}`} />
             <Bar dataKey="revenue">
               {barData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

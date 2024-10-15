@@ -16,7 +16,7 @@ import { useTranslations } from 'next-intl';
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
 import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
 import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { formatNumber } from '@/lib/utils';
 
 import { ChargesTable } from '@/components/tables/charges-table/client';
@@ -28,6 +28,7 @@ import { BarGraph } from '@/components/charts/attach-chip-bar-graph';
 import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
+import { SalesByVendorGraph } from '@/components/charts/sales-by-vendor-column-graph';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -60,11 +61,13 @@ export default function DashboardPage() {
   const { posUser, loading } = useDataContext();
   const t = useTranslations();
   const router = useRouter();
-
+  const searchParams = useSearchParams();
+  
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({
     from: new Date(2024, 8, 26),  // Default to 2024-09-26 00:00:00
     to: new Date(2024, 8, 28), // Default to 2024-09-28 23:59:59
   });
+  const [vendorId, setVendorId] = useState<string | null>(null);
   const [realMoneyReport, setRealMoneyReport] = useState<any>(null);
   const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
   const [creditsToRealMoney, setCreditsToRealMoney] = useState(0);
@@ -134,7 +137,14 @@ export default function DashboardPage() {
       const toDate = selectedDateRange.to?.toLocaleDateString('en-CA');
       console.log(`Fetching reports at Dates ${selectedDateRange?.from} - ${selectedDateRange?.to}`);
 
-      if(!posUser?.vendorId) {
+      let vendorIdFinal = posUser?.vendorId;
+      const queryVendorId = searchParams.get('vendorId');
+
+      if (isSuperAdmin(posUser) && queryVendorId) {
+        vendorIdFinal = queryVendorId;
+      }
+      console.log('Vendor ID:', vendorIdFinal);
+      if(!vendorIdFinal) {
         const deposits = await fetchReports('deposits', undefined, fromDate, toDate);
         // real money 
         totalDepositAmount = parseFloat(deposits[0].total_amount);
@@ -162,11 +172,11 @@ export default function DashboardPage() {
         setDepositReportForPie(chartData);
       } //end of ower priviliges
 
-      const customersRes = await fetchReports('get-customer-data', posUser?.vendorId, fromDate, toDate);
+      const customersRes = await fetchReports('get-customer-data', vendorIdFinal, fromDate, toDate);
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
-      if(!posUser?.vendorId) {
+      if(!vendorIdFinal) {
         setRealMoneyReport({
           totalDepositAmount,
           totalWithoutPaymentAmount,
@@ -212,9 +222,8 @@ export default function DashboardPage() {
         .sort((a, b) => new Date(a.hour).getTime() - new Date(b.hour).getTime());
 
       setSalesDataPerHour(formattedData);
-
+      setVendorId(vendorIdFinal);
       setFetchingData(false);
-
     };
 
     if(!loading && posUser) {
@@ -223,7 +232,7 @@ export default function DashboardPage() {
       router.push('/');
     }
     
-  }, [loading, posUser, selectedDateRange]);
+  }, [loading, posUser, selectedDateRange, searchParams]);
 
   const isSuperAdmin = (user) => {
     return user?.role === 'owner' || user?.role === 'super_admin';
@@ -247,7 +256,6 @@ export default function DashboardPage() {
               range.to.setHours(23, 59, 59, 999);
               setSelectedDateRange(range);
             }
-            
           }}/> 
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
@@ -257,64 +265,66 @@ export default function DashboardPage() {
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {/* Total Deposits */}
-              {isSuperAdmin(posUser) && <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport.totalAmount)}`}</div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-right text-lg mb-4">{`${t('perChannelIncome')}`}</div>
-                  <table className="w-full text-right">
-                    <tbody>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalDepositAmount)}`}</td>
-                        <td className="px-2">{`${t('siteIncome')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieOne"></div>
-                        </td>
-                      </tr>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalWithoutPaymentAmount)}`}</td>
-                        <td className="px-2">{`${t('cacheIncome')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
-                        </td>        
-                      </tr>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`₪${formatNumber(realMoneyReport.totalPosDepositAmount)}`}</td>
-                        <td className="px-2">{`${t('directIncome')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieThree"></div>
-                        </td>          
-                      </tr>
-                    </tbody>
-                  </table>
-                  {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
-                  <div className="text-center text-md font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                  <div className="text-center text-md font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
-                </CardContent>
-                <CardFooter>
-                  <Accordion
-                    type="single"
-                    collapsible
-                  >
-                    <AccordionItem value="item-1" className="!border-none">
-                      <AccordionTrigger className="flex flex-row justify-between !no-underline">
-                        <div className="flex-1 text-right text-lg font-bold">
-                          {`טבלת רווח ומעקב הפקדות`}
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <ChargesTable data={chargesData} />
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </CardFooter>
-              </Card>}
+              {isSuperAdmin(posUser) && realMoneyReport && 
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport?.totalAmount)}`}</div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-right text-lg mb-4">{`${t('perChannelIncome')}`}</div>
+                    <table className="w-full text-right">
+                      <tbody>
+                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalDepositAmount)}`}</td>
+                          <td className="px-2">{`${t('siteIncome')}`}</td>
+                          <td className="px-2 w-3">
+                            <div className="w-3 h-3 rounded-full bg-pieOne"></div>
+                          </td>
+                        </tr>
+                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalWithoutPaymentAmount)}`}</td>
+                          <td className="px-2">{`${t('cacheIncome')}`}</td>
+                          <td className="px-2 w-3">
+                            <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
+                          </td>        
+                        </tr>
+                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalPosDepositAmount)}`}</td>
+                          <td className="px-2">{`${t('directIncome')}`}</td>
+                          <td className="px-2 w-3">
+                            <div className="w-3 h-3 rounded-full bg-pieThree"></div>
+                          </td>          
+                        </tr>
+                      </tbody>
+                    </table>
+                    {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
+                    <div className="text-center text-md font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                    <div className="text-center text-md font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                  </CardContent>
+                  <CardFooter>
+                    <Accordion
+                      type="single"
+                      collapsible
+                    >
+                      <AccordionItem value="item-1" className="!border-none">
+                        <AccordionTrigger className="flex flex-row justify-between !no-underline">
+                          <div className="flex-1 text-right text-lg font-bold">
+                            {`טבלת רווח ומעקב הפקדות`}
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <ChargesTable data={chargesData} />
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardFooter>
+                </Card>}
               
               {/* Customers Data */}
-              {isSuperAdmin(posUser) && <Card>
+              {isSuperAdmin(posUser) && customersData?.customersData && 
+              <Card>
                 <CardHeader>
                   <CardTitle>
                     <div className="text-xl text-center">{`${t('customersData')}`}</div>
@@ -358,7 +368,7 @@ export default function DashboardPage() {
               {/* Pairing Data */}
               {isSuperAdmin(posUser) && customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
               {/* 20 Top Customers */}
-              {isSuperAdmin(posUser) &&   topCustomers && 
+              {isSuperAdmin(posUser) && topCustomers && 
                 <Card>
                   <CardHeader>
                     <CardTitle>
@@ -372,10 +382,13 @@ export default function DashboardPage() {
               }
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
               <div className="col-span-4">
                 { customersData?.totalSalesPerHour && <RevenueLineGraph data={customersData.totalSalesPerHour} />}
                 {/* customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />*/}
+              </div>
+              <div className="col-span-4">
+                {customersData?.totalSalesSummery && customersData?.totalSalesSummery?.length > 1 && <SalesByVendorGraph data={customersData?.totalSalesSummery} />}
               </div>
               <div className="col-span-4">
                 {salesDataPerHour && <SalesBarGraph
@@ -385,11 +398,11 @@ export default function DashboardPage() {
                                       />}
               </div>
               <div className="col-span-4">
-                { customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
+                { customersData?.totalSalesSummery?.length === 1 && customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
               </div>
               <div className="col-span-4">
                 {/* customersData?.productsSalesByHour && <ProductSalesByHour data={customersData.productsSalesByHour} />*/}
-                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
