@@ -36,7 +36,7 @@ interface BarGraphProps {
   description: string;
 }
 
-export function BarGraph({ data, title, description }: BarGraphProps) {
+export function PairingPerHourBarGraph({ data, title, description }: BarGraphProps) {
   const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>('hourly_count');
 
   // Compute the cumulative pairings till each hour

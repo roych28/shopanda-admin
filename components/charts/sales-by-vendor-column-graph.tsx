@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
 import { formatNumber } from '@/lib/utils';
 
 const chartConfig = {
@@ -38,19 +38,22 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
 
   // Format the description with vendor details as buttons that route with vendor_id
   const description = (
-    <div className="list-none space-y-1 text-right rtl">
-      {data.map((vendor) => {
+    <div className="list-none space-y-1 text-right text-sm rtl">
+      {data.map((vendor, index) => {
         const averageTransaction = parseFloat(vendor.average_transaction).toFixed(2);
         const totalTip = parseFloat(vendor.total_tip).toFixed(2);
+        const vendorColor = chartConfig[`vendor${String.fromCharCode(65 + index)}`]?.color || '#000';
+
         return (
           <div key={vendor.vendor_id} className="relative pr-1">
             <button
               onClick={() => router.push(`/dashboard?vendorId=${vendor.vendor_id}`)}
-              className="text-blue-600 underline hover:text-blue-800"
+              className={`text-white rounded p-2 w-full text-center`}
+              style={{ backgroundColor: vendorColor }}
             >
-              <div className="mr-6 text-right">
+              <div className="text-right">
                 <div>
-                  <strong>{vendor.vendor_name}</strong>: {vendor.transaction_count} עסקאות, הכנסה כוללת של {vendor.total_revenue}
+                  <strong>{vendor.vendor_name}</strong>: {vendor.transaction_count} עסקאות, הכנסה כוללת {vendor.total_revenue}
                 </div>
                 <div>
                   עסקה ממוצעת {averageTransaction}, טיפ כולל {totalTip}
@@ -63,37 +66,40 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
     </div>
   );
 
-  // Prepare bar chart data for total revenue
+  // Prepare bar chart data for total revenue and tips stacked
   const barData = data.map((vendor) => ({
     name: vendor.vendor_name,
-    revenue: parseFloat(vendor.total_revenue),
+    revenue: parseFloat(vendor.total_revenue) - parseFloat(vendor.total_tip),
+    tip: parseFloat(vendor.total_tip),
   }));
 
   // Colors for the bar chart
-  const COLORS = ['#1f77b4', '#ff7f0e'];
+  const COLORS = ['#4A90E2', '#FFAA33'];
 
   return (
     <Card className="rtl">
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
           <CardTitle>
-            <div className="text-center">{`סה"כ מכירות: ${totalRevenue}`}</div>
+            <div className="text-center">{`סה"כ מכירות קרדיטים: ${totalRevenue}`}</div>
           </CardTitle>
           <CardDescription></CardDescription>
         </div>
       </CardHeader>
       <CardContent className="px-2">
-      {description}
+        {description}
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={barData}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip formatter={(value: number) => `${value.toFixed(2)}`} />
-            <Bar dataKey="revenue">
+            <Legend formatter={(value) => value === 'מוצרים' ? '' : value} />
+            <Bar dataKey="revenue" stackId="a" name="מוצרים" legendType="none">
               {barData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell key={`cell-revenue-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>
+            <Bar dataKey="tip" stackId="a" name="טיפים" fill="#FFD700" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

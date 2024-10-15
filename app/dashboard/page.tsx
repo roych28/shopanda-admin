@@ -24,7 +24,7 @@ import { CustomersClient } from '@/components/tables/customer-tables/client';
 
 import { RevenueLineGraph } from '@/components/charts/total-revenue-sales-graph';
 import { AreaGraph } from '@/components/charts/area-graph';
-import { BarGraph } from '@/components/charts/attach-chip-bar-graph';
+import { PairingPerHourBarGraph } from '@/components/charts/pairing-per-hour-bar-graph';
 import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
@@ -263,145 +263,156 @@ export default function DashboardPage() {
             <TabsTrigger value="overview"></TabsTrigger>
           </TabsList>*/}
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
               {/* Total Deposits */}
               {isSuperAdmin(posUser) && realMoneyReport && !vendorId && 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport?.totalAmount)}`}</div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-right text-lg mb-4">{`${t('perChannelIncome')}`}</div>
-                    <table className="w-full text-right">
-                      <tbody>
-                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalDepositAmount)}`}</td>
-                          <td className="px-2">{`${t('siteIncome')}`}</td>
-                          <td className="px-2 w-3">
-                            <div className="w-3 h-3 rounded-full bg-pieOne"></div>
-                          </td>
-                        </tr>
-                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalWithoutPaymentAmount)}`}</td>
-                          <td className="px-2">{`${t('cacheIncome')}`}</td>
-                          <td className="px-2 w-3">
-                            <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
-                          </td>        
-                        </tr>
-                        <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                          <td className="px-2">{`₪${formatNumber(realMoneyReport.totalPosDepositAmount)}`}</td>
-                          <td className="px-2">{`${t('directIncome')}`}</td>
-                          <td className="px-2 w-3">
-                            <div className="w-3 h-3 rounded-full bg-pieThree"></div>
-                          </td>          
-                        </tr>
-                      </tbody>
-                    </table>
-                    {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
-                    <div className="text-center text-md font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
-                    <div className="text-center text-md font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
-                  </CardContent>
-                  <CardFooter>
-                    <Accordion
-                      type="single"
-                      collapsible
-                    >
-                      <AccordionItem value="item-1" className="!border-none">
-                        <AccordionTrigger className="flex flex-row justify-between !no-underline">
-                          <div className="flex-1 text-right text-lg font-bold">
-                            {`טבלת רווח ומעקב הפקדות`}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <ChargesTable data={chargesData} />
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </CardFooter>
-                </Card>}
-              
+                <div className="col-span-1 sm:order-2">
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle>
+                        <div className="text-xl text-center">{`${t('totalIncome')} - ₪${formatNumber(realMoneyReport?.totalAmount)}`}</div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-right text-lg mb-4">{`${t('perChannelIncome')}`}</div>
+                      <table className="w-full text-right">
+                        <tbody>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`₪${formatNumber(realMoneyReport.totalDepositAmount)}`}</td>
+                            <td className="px-2">{`${t('siteIncome')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieOne"></div>
+                            </td>
+                          </tr>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`₪${formatNumber(realMoneyReport.totalWithoutPaymentAmount)}`}</td>
+                            <td className="px-2">{`${t('cacheIncome')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieTwo"></div>
+                            </td>        
+                          </tr>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`₪${formatNumber(realMoneyReport.totalPosDepositAmount)}`}</td>
+                            <td className="px-2">{`${t('directIncome')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieThree"></div>
+                            </td>          
+                          </tr>
+                        </tbody>
+                      </table>
+                      {depositReportForPie && <PieGraphTotal chartData={depositReportForPie} title={t('totalIncome')} />}
+                      <div className="text-center text-md font-medium">{`${t('creditToRealMoneyRatio')} ${creditsToRealMoney}`}</div>
+                      <div className="text-center text-md font-medium">{`${t('creditsNotSpent')} ₪${formatNumber(realMoneyReport.creditsNotSpent)}`}</div>
+                    </CardContent>
+                    <CardFooter>
+                      <Accordion
+                        type="single"
+                        collapsible
+                      >
+                        <AccordionItem value="item-1" className="!border-none">
+                          <AccordionTrigger className="flex flex-row justify-between !no-underline">
+                            <div className="flex-1 text-right text-lg font-bold">
+                              {`טבלת רווח ומעקב הפקדות`}
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ChargesTable data={chargesData} />
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </CardFooter>
+                  </Card>
+                </div>
+              }              
+
               {/* Customers Data */}
               {isSuperAdmin(posUser) && customersData?.customersData && 
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <div className="text-xl text-center">{`${t('customersData')}`}</div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <table className="w-full text-right">
-                    <tbody>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`${formatNumber(customersData?.customersData?.customersRegistered)}`}</td>
-                        <td className="px-2">{`${t('registeredCustomers')}`}</td>
-                        <td className="px-2 w-3" />
-                      </tr>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`${formatNumber(customersData?.customersData?.maleCount)}`}</td>
-                        <td className="px-2">{`${t('males')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieFive"></div>
-                        </td>
-                      </tr>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`${formatNumber(customersData?.customersData?.femaleCount)}`}</td>
-                        <td className="px-2">{`${t('females')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
-                        </td>
-                      </tr>
-                      <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
-                        <td className="px-2">{`${formatNumber(customersData?.customersData?.otherCount + customersData?.customersData?.unknownGenderCount)}`}</td>
-                        <td className="px-2">{`${t('other')}`}</td>
-                        <td className="px-2 w-3">
-                          <div className="w-3 h-3 rounded-full bg-pieSix"></div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </CardContent>
-                {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')} />}
-                <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${formatNumber(customersData?.customersData?.customersWithNfc)}`}</div>
-              </Card>}
+                <div className="col-span-1 sm:order-1">
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle>
+                        <div className="text-xl text-center">{`${t('customersData')}`}</div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <table className="w-full text-right">
+                        <tbody>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`${formatNumber(customersData?.customersData?.customersRegistered)}`}</td>
+                            <td className="px-2">{`${t('registeredCustomers')}`}</td>
+                            <td className="px-2 w-3" />
+                          </tr>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`${formatNumber(customersData?.customersData?.maleCount)}`}</td>
+                            <td className="px-2">{`${t('males')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieFive"></div>
+                            </td>
+                          </tr>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`${formatNumber(customersData?.customersData?.femaleCount)}`}</td>
+                            <td className="px-2">{`${t('females')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieSeven"></div>
+                            </td>
+                          </tr>
+                          <tr className={`${isRTL() ? 'flex-row-reverse' : ''}`}>
+                            <td className="px-2">{`${formatNumber(customersData?.customersData?.otherCount + customersData?.customersData?.unknownGenderCount)}`}</td>
+                            <td className="px-2">{`${t('other')}`}</td>
+                            <td className="px-2 w-3">
+                              <div className="w-3 h-3 rounded-full bg-pieSix"></div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </CardContent>
+                    {customersData && <PieGraphCmp chartData={customersDataForPie} title={t('customers')} />}
+                    <div className="text-center text-xl font-medium mb-4">{`${t('CustomersWithNfc')} ${formatNumber(customersData?.customersData?.customersWithNfc)}`}</div>
+                  </Card>
+                </div>
+              }
+
               {/* Pairing Data */}
-              {isSuperAdmin(posUser) && customersData?.pairingByHour && <BarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />}
+              {isSuperAdmin(posUser) && customersData?.pairingByHour && 
+                <div className="col-span-1 sm:order-3">
+                  <PairingPerHourBarGraph data={customersData?.pairingByHour} title={t('pairingChartTitle')} />
+                </div>
+              }
+
               {/* 20 Top Customers */}
               {isSuperAdmin(posUser) && topCustomers && 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>
-                      <div>{`הלקוחות המובילים בקניות`}</div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="m-0 p-0">
-                    <CustomersClient data={topCustomers} />
-                  </CardContent>    
-                </Card>
+                <div className="col-span-1 sm:order-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>
+                        <div>{`הלקוחות המובילים בקניות`}</div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="m-0 p-0">
+                      <CustomersClient data={topCustomers} />
+                    </CardContent>    
+                  </Card>
+                </div>
               }
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="col-span-4">
-                { customersData?.totalSalesPerHour && <RevenueLineGraph data={customersData.totalSalesPerHour} />}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+              <div className="col-span-1">
+                {customersData?.totalSalesPerHour && <RevenueLineGraph data={customersData.totalSalesPerHour} />}
                 {/* customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />*/}
               </div>
-              <div className="col-span-4">
+              <div className="col-span-1">
                 {customersData?.totalSalesSummery && customersData?.totalSalesSummery?.length > 1 && <SalesByVendorGraph data={customersData?.totalSalesSummery} />}
               </div>
-              <div className="col-span-4">
-                {salesDataPerHour && <SalesBarGraph
-                                        data={salesDataPerHour}
-                                        title="גרף מכירות לפי שעה"
-                                        description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
-                                      />}
+              <div className="col-span-1">
+              {salesDataPerHour && <SalesBarGraph
+                            data={salesDataPerHour}
+                            title="גרף מכירות לפי שעה"
+                            description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
+                          />}
               </div>
-              <div className="col-span-4">
-                { customersData?.totalSalesSummery?.length === 1 && customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
-              </div>
-              <div className="col-span-4">
-                {/* customersData?.productsSalesByHour && <ProductSalesByHour data={customersData.productsSalesByHour} />*/}
+              <div className="col-span-1">
+                {customersData?.totalSalesSummery?.length === 1 && customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
               </div>
             </div>
           </TabsContent>
