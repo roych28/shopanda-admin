@@ -79,10 +79,11 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
           <CardTitle>
             <div className="text-center">{`סה"כ מכירות: ${totalRevenue}`}</div>
           </CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription></CardDescription>
         </div>
       </CardHeader>
       <CardContent className="px-2">
+      {description}
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={barData}>
             <XAxis dataKey="name" />
