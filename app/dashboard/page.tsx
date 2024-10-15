@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
+import { DateRange } from 'react-day-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from '@/components/recent-sales';
 import { Button } from '@/components/ui/button';
@@ -60,6 +61,10 @@ export default function DashboardPage() {
   const t = useTranslations();
   const router = useRouter();
 
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>({
+    from: new Date(2024, 8, 26),  // Default to 2024-09-26 00:00:00
+    to: new Date(2024, 8, 28), // Default to 2024-09-28 23:59:59
+  });
   const [realMoneyReport, setRealMoneyReport] = useState<any>(null);
   const [depositReportForPie, setDepositReportForPie] = useState<any>(null);
   const [creditsToRealMoney, setCreditsToRealMoney] = useState(0);
@@ -115,18 +120,22 @@ export default function DashboardPage() {
       total: "₪137103.3", // 145671 - 944.65 - 339.5 - 7283.55 = 137103.3
     },
   ]);
-  // Fetch all reports when the page loads
+  
+
   useEffect(() => {
     const fetchAllReports = async () => {
-        let totalDepositAmount =0;
-        let totalWithoutPaymentAmount = 0;
-        let totalPosDepositAmount = 0;
-        let totalAmount = 0;
-        let totalCredits = 1;
+      let totalDepositAmount =0;
+      let totalWithoutPaymentAmount = 0;
+      let totalPosDepositAmount = 0;
+      let totalAmount = 0;
+      let totalCredits = 1;
+
+      const fromDate = selectedDateRange.from?.toLocaleDateString('en-CA');
+      const toDate = selectedDateRange.to?.toLocaleDateString('en-CA');
+      console.log(`Fetching reports at Dates ${selectedDateRange?.from} - ${selectedDateRange?.to}`);
 
       if(!posUser?.vendorId) {
-        const deposits = await fetchReports('deposits');
-
+        const deposits = await fetchReports('deposits', undefined, fromDate, toDate);
         // real money 
         totalDepositAmount = parseFloat(deposits[0].total_amount);
         totalWithoutPaymentAmount = parseFloat(deposits[1].total_amount);
@@ -151,9 +160,9 @@ export default function DashboardPage() {
         ];
 
         setDepositReportForPie(chartData);
-      }
+      } //end of ower priviliges
 
-      const customersRes = await fetchReports('get-customer-data', posUser?.vendorId);
+      const customersRes = await fetchReports('get-customer-data', posUser?.vendorId, fromDate, toDate);
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
@@ -214,7 +223,7 @@ export default function DashboardPage() {
       router.push('/');
     }
     
-  }, [loading, posUser]);
+  }, [loading, posUser, selectedDateRange]);
 
   const isSuperAdmin = (user) => {
     return user?.role === 'owner' || user?.role === 'super_admin';
@@ -227,10 +236,19 @@ export default function DashboardPage() {
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
-        <div className="text-right">
-          <div className="text-2xl font-bold">
+        <div className="flex flex-row-reverse">
+          <div className="flex-1 text-right text-2xl font-bold">
           היי {posUser?.firstName} 
           </div>
+          <CalendarDateRangePicker className="flex-1" onDateChange={(range: DateRange | undefined) => {
+            if(range && range.from && range.to) {
+              console.log('Date Range Selected:', range);
+              range.from.setHours(0, 0, 0, 0);
+              range.to.setHours(23, 59, 59, 999);
+              setSelectedDateRange(range);
+            }
+            
+          }}/> 
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           {/*<TabsList>
