@@ -10,7 +10,8 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle
+  CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import {
   ChartContainer,
@@ -85,6 +86,9 @@ function processData(rawData) {
 export function RevenueLineGraph({ data, title, description }: RevenueLineGraphProps) {
   const processedData = processData(data);
   const totalRevenue = processedData.reduce((acc, item) => acc + item.total_revenue, 0);
+  const totalTransactions = processedData.reduce((acc, item) => acc + item.transaction_count, 0);
+  const averageTransactionAmount = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+
 
   return (
     <Card>
@@ -147,7 +151,7 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
                       {payload.map((entry, index) => {
                         if (entry.dataKey === 'cumulative_revenue') {
                           return (
-                            <div key={index}>{`הכנסות מצטברות: ₪${entry.value.toLocaleString()}`}</div>
+                            <div key={index}>{`הכנסות מצטברות: ${entry.value.toLocaleString()}`}</div>
                           );
                         }
                         if (entry.dataKey === 'cumulative_transactions') {
@@ -157,7 +161,7 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
                         }
                         if (entry.dataKey === 'average_transaction') {
                           return (
-                            <div key={index}>{`ממוצע עסקה: ₪${entry.value.toLocaleString()}`}</div>
+                            <div key={index}>{`ממוצע עסקה: ${entry.value.toLocaleString()}`}</div>
                           );
                         }
                         return null;
@@ -200,6 +204,13 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
+      <CardFooter>
+        {/* Footer with total transactions and average transaction */}
+        <div className="mt-4 text-right text-md">
+          <div>{`סה"כ עסקאות: ${totalTransactions.toLocaleString()}`}</div>
+          <div>{`עסקה ממוצעת: ${averageTransactionAmount.toFixed(2)}`}</div>
+        </div>
+      </CardFooter>
     </Card>
   );
 }
