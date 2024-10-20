@@ -48,7 +48,7 @@ export function VendorDropdown({ vendors, initialVendorId = null }: VendorDropdo
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {vendors
-          .filter((vendor) => vendor.vendor_id !== selectedVendor?.vendor_id) // Filter out the selected vendor
+          .filter((vendor) => vendor.vendor_id !== selectedVendor?.vendor_id)
           .map((vendor) => (
             <DropdownMenuItem
               key={vendor.vendor_id}

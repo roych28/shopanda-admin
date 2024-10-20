@@ -110,13 +110,13 @@ export default function DashboardPage() {
     },
     {
       details: "השכרת חומרה",
-      agreement: "כמות תחנות עבודה * ₪150 לחודש",
+      agreement: "",
       total: "₪0",
     },
     {
       details: "עמלות נוספות",
       agreement: "הכחשות עסקה, זיכויים, תעריפון חברת האשראי",
-      total: "₪250", 
+      total: "₪252.65", 
     },
     {
       details: "סיכום עמלות והחזרים",

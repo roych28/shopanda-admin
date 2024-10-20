@@ -84,12 +84,11 @@ export function ProductPieCharts({ data }: ProductPieChartProps) {
       <Card key={index} className="rtl mb-4">
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6 text-right">
-            <CardTitle>{vendorName}</CardTitle>
-            <CardDescription>מוצרים לפי כמויות שנמכרו</CardDescription>
+            <CardTitle>{`פריטים שנמכרו`}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="px-2">
-          <ResponsiveContainer width="100%" height={500}>
+          <ResponsiveContainer width="100%" height={400}>
             <PieChart>
               <Pie
                 data={pieData}
