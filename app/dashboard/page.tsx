@@ -21,6 +21,7 @@ import { formatNumber } from '@/lib/utils';
 
 import { ChargesTable } from '@/components/tables/charges-table/client';
 import { CustomersClient } from '@/components/tables/customer-tables/client';
+import { PurchaseHistory } from '@/components/tables/purchases-history/client';
 
 import { RevenueLineGraph } from '@/components/charts/total-revenue-sales-graph';
 import { AreaGraph } from '@/components/charts/area-graph';
@@ -418,6 +419,9 @@ export default function DashboardPage() {
               </div>
               <div className="col-span-1">
                 {customersData?.totalSalesSummery?.length === 1 && customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
+              </div>
+              <div className="col-span-1">
+                {customersData?.lastPurchases && <PurchaseHistory data={customersData.lastPurchases} />}
               </div>
             </div>
           </TabsContent>
