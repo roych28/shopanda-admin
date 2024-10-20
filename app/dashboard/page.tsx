@@ -29,6 +29,7 @@ import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
 import { PieGraphCmp } from '@/components/charts/pie-graph-cmp';
 import { SalesByVendorGraph } from '@/components/charts/sales-by-vendor-column-graph';
+import { VendorDropdown } from '@/components/ui/toggle-routing';
 
 const SERVER_API_BASE_URL = process.env.NEXT_PUBLIC_SERVER_API_BASE_URL;
 const isRTL = () => typeof document !== 'undefined' && document.dir === 'rtl';
@@ -244,19 +245,23 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-2">
-        <div className="flex flex-row-reverse">
-          <div className="flex-1 text-right text-2xl font-bold">
-          היי {posUser?.firstName} 
+        <div className="sticky top-0 z-10 bg-white shadow-md px-2 py-2">
+          <div className="flex-1 text-right text-lg font-bold">
+            היי {posUser?.firstName}
           </div>
-          <CalendarDateRangePicker className="flex-1" onDateChange={(range: DateRange | undefined) => {
-            if(range && range.from && range.to) {
-              console.log('Date Range Selected:', range);
-              range.from.setHours(0, 0, 0, 0);
-              range.to.setHours(23, 59, 59, 999);
-              setSelectedDateRange(range);
-            }
-          }}/> 
+          <div className="flex">
+            <div className="flex-1">
+              {customersData?.totalSalesSummery && <VendorDropdown vendors={customersData.totalSalesSummery} initialVendorId={vendorId} /> }
+            </div>
+            <CalendarDateRangePicker className="flex-1" onDateChange={(range: DateRange | undefined) => {
+              if(range && range.from && range.to) {
+                console.log('Date Range Selected:', range);
+                range.from.setHours(0, 0, 0, 0);
+                range.to.setHours(23, 59, 59, 999);
+                setSelectedDateRange(range);
+              }
+            }}/> 
+          </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
           {/*<TabsList>
@@ -417,7 +422,7 @@ export default function DashboardPage() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
+      
     </PageContainer>
   );
 }
