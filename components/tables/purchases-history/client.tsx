@@ -15,7 +15,7 @@ export const PurchaseHistory: React.FC<ChargesTableProps> = ({ data }) => {
         <CardTitle className="text-right">רשימת תשלומים</CardTitle>
       </CardHeader>
       <CardContent>
-        <DataTable columns={columns} data={data} />
+        <DataTable searchKey="customerName" columns={columns} data={data} />
       </CardContent>
     </Card>
   );
