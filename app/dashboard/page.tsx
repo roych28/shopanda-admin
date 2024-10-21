@@ -196,33 +196,27 @@ export default function DashboardPage() {
       setCustomersDataForPie(genderChartData);
       setTopCustomers(customersRes?.topCustomers);
 
-      const formattedData = customersRes.totalSalesPerHour
-        .reduce((acc, item) => {
-          const hour = item.hour;
-          const existingEntry = acc.find((entry) => entry.hour === hour);
-        
-          if (existingEntry) {
-            if (item.vendor_name.trim() === 'המזנון') {
-              existingEntry.vendorA_count = parseInt(item.transaction_count, 10);
-              existingEntry.vendorA_revenue = parseFloat(item.total_revenue);
-            } else if (item.vendor_name.trim() === "צ'אי שופ / הבר") {
-              existingEntry.vendorB_count = parseInt(item.transaction_count, 10);
-              existingEntry.vendorB_revenue = parseFloat(item.total_revenue);
-            }
-          } else {
-            acc.push({
-              hour: item.hour,
-              vendorA_count: item.vendor_name.trim() === 'המזנון' ? parseInt(item.transaction_count, 10) : 0,
-              vendorB_count: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseInt(item.transaction_count, 10) : 0,
-              vendorA_revenue: item.vendor_name.trim() === 'המזנון' ? parseFloat(item.total_revenue) : 0,
-              vendorB_revenue: item.vendor_name.trim() === "צ'אי שופ / הבר" ? parseFloat(item.total_revenue) : 0,
-            });
-          }
-        
-          return acc;
-        }, [])
-        .sort((a, b) => new Date(a.hour).getTime() - new Date(b.hour).getTime());
-
+      
+      const formattedData = customersRes.totalSalesPerHour.reduce((acc, item) => {
+        const hour = item.hour;
+        const vendorId = item.vendor_id;
+        const existingEntry = acc.find((entry) => entry.hour === hour);
+      
+        if (existingEntry) {
+          existingEntry[`vendor_${vendorId}_count`] = parseInt(item.transaction_count, 10);
+          existingEntry[`vendor_${vendorId}_revenue`] = parseFloat(item.total_revenue);
+        } else {
+          const newEntry = {
+            hour,
+          };
+          newEntry[`vendor_${vendorId}_count`] = parseInt(item.transaction_count, 10);
+          newEntry[`vendor_${vendorId}_revenue`] = parseFloat(item.total_revenue);
+          acc.push(newEntry);
+        }
+      
+        return acc;
+      }, []).sort((a, b) => new Date(a.hour).getTime() - new Date(b.hour).getTime());
+      
       setSalesDataPerHour(formattedData);
       setVendorId(vendorIdFinal);
       setFetchingData(false);

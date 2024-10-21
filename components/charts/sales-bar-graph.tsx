@@ -3,7 +3,6 @@
 
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
 import {
   Card,
   CardContent,
@@ -19,23 +18,21 @@ import {
 } from '@/components/ui/chart';
 
 const chartConfig = {
-  vendorA: {
+  4: {
     label: 'המזנון',
-    color: '#1f77b4'
+    color: '#1f77b4',
   },
-  vendorB: {
+  5: {
     label: "צ'אי שופ / הבר",
-    color: '#ff7f0e'
+    color: '#ff7f0e',
   }
+  // Add more vendors as needed with their unique IDs, labels, and colors
 };
 
 interface SalesBarGraphProps {
   data: {
     hour: string;
-    vendorA_count: number;
-    vendorB_count: number;
-    vendorA_revenue: number;
-    vendorB_revenue: number;
+    [key: string]: number | string; // Allow dynamic vendor keys
   }[];
   title: string;
   description: string;
@@ -87,28 +84,13 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
               <YAxis />
               <Tooltip
                 formatter={(value, name, props) => {
-                  const vendorARevenue = props.payload.vendorA_revenue;
-                  const vendorBRevenue = props.payload.vendorB_revenue;
+                  const vendorId = props.dataKey.split('_')[1];
+                  const vendorConfig = chartConfig[vendorId];
 
-                  let vendorColor = '';
+                  // Skip showing tooltip if revenue is 0
+                  if (value === 0) return null;
 
-                  if (name === chartConfig.vendorA.label) {
-                    vendorColor = chartConfig.vendorA.color;
-
-                    // Skip showing tooltip if revenue is 0
-                    if (vendorARevenue === 0) return null;
-
-                    // Return plain text with transactions count for vendorA
-                    return `עסקאות: ${value}`;
-                  } else if (name === chartConfig.vendorB.label) {
-                    vendorColor = chartConfig.vendorB.color;
-
-                    // Skip showing tooltip if revenue is 0
-                    if (vendorBRevenue === 0) return null;
-
-                    // Return plain text with transactions count for vendorB
-                    return `עסקאות: ${value}`;
-                  }
+                  return `עסקאות: ${value}`;
                 }}
                 content={({ payload, label }) => {
                   if (!payload || payload.length === 0) return null;
@@ -130,12 +112,9 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
                       <div className="font-semibold mb-2">{formattedDate}</div>
                       {/* Transaction Details */}
                       {payload.map((item, index) => {
-                        let vendorColor = '';
-                        if (item.name === chartConfig.vendorA.label) {
-                          vendorColor = chartConfig.vendorA.color;
-                        } else if (item.name === chartConfig.vendorB.label) {
-                          vendorColor = chartConfig.vendorB.color;
-                        }
+                        const vendorId = item.dataKey.split('_')[1];
+                        const vendorConfig = chartConfig[vendorId];
+                        const vendorColor = vendorConfig.color;
 
                         return (
                           <div key={index} className="flex items-center justify-end">
@@ -152,22 +131,17 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
                 }}
               />
               <Legend
-                formatter={(value) =>
-                  chartConfig[value as keyof typeof chartConfig]?.label || value
-                }
+                formatter={(value) => chartConfig[value]?.label || value}
               />
-              <Bar
-                dataKey="vendorA_count"
-                fill={chartConfig.vendorA.color}
-                name={chartConfig.vendorA.label}
-                barSize={30}
-              />
-              <Bar
-                dataKey="vendorB_count"
-                fill={chartConfig.vendorB.color}
-                name={chartConfig.vendorB.label}
-                barSize={30}
-              />
+              {Object.keys(chartConfig).map((vendorId) => (
+                <Bar
+                  key={vendorId}
+                  dataKey={`vendor_${vendorId}_count`}
+                  fill={chartConfig[vendorId].color}
+                  name={vendorId}
+                  barSize={30}
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
