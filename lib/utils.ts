@@ -28,7 +28,8 @@ export function hasDraggableData<T extends Active | Over>(
   return false;
 }
 
-export function formatNumber(num: number): string {
+export function formatNumber(numIn: number | string): string {
+  const num = typeof numIn === 'string' ? Number(numIn) : numIn;
   const hasDecimal = num % 1 !== 0;
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: hasDecimal ? 2 : 0,
