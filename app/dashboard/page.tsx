@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import PageContainer from '@/components/layout/page-container';
-import { RecentSales } from '@/components/recent-sales';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,8 +12,6 @@ import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
 
 import { SalesBarGraph } from '@/components/charts/sales-bar-graph';
-import { TotalSalesGraph } from '@/components/charts/total-sales-bar-graph';
-import { ProductSalesByHour } from '@/components/charts/sales-by-hour-bar-graph';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { formatNumber } from '@/lib/utils';
 
@@ -24,7 +20,6 @@ import { CustomersClient } from '@/components/tables/customer-tables/client';
 import { PurchaseHistory } from '@/components/tables/purchases-history/client';
 
 import { RevenueLineGraph } from '@/components/charts/total-revenue-sales-graph';
-import { AreaGraph } from '@/components/charts/area-graph';
 import { PairingPerHourBarGraph } from '@/components/charts/pairing-per-hour-bar-graph';
 import { PieGraphTotal } from '@/components/charts/pie-graph-total';
 import { ProductPieCharts } from '@/components/charts/pie-graph-products';
@@ -397,23 +392,28 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+              {/* Total Revenue Line Graph */}
               <div className="col-span-1">
                 {customersData?.totalSalesPerHour && <RevenueLineGraph data={customersData.totalSalesPerHour} />}
                 {/* customersData?.totalSalesSummery && <TotalSalesGraph data={customersData.totalSalesSummery} />*/}
               </div>
+              {/* Sales Per Hour Bar Graph */}
+              <div className="col-span-1">
+                {salesDataPerHour && <SalesBarGraph
+                              data={salesDataPerHour}
+                              title="גרף מכירות לפי שעה"
+                              description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
+                            />}
+              </div>
+              {/* Sales By Vendor Graph */}
               <div className="col-span-1">
                 {customersData?.totalSalesSummery && customersData?.totalSalesSummery?.length > 1 && <SalesByVendorGraph data={customersData?.totalSalesSummery} />}
-              </div>
-              <div className="col-span-1">
-              {salesDataPerHour && <SalesBarGraph
-                            data={salesDataPerHour}
-                            title="גרף מכירות לפי שעה"
-                            description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
-                          />}
-              </div>
+              </div>         
+              {/* Products Sold Pie Charts */}
               <div className="col-span-1">
                 {customersData?.totalSalesSummery?.length === 1 && customersData?.productsSold && <ProductPieCharts data={customersData.productsSold} />}
               </div>
+              {/* Last Purchases Table */}
               <div className="col-span-1">
                 {customersData?.lastPurchases && <PurchaseHistory data={customersData.lastPurchases} />}
               </div>
