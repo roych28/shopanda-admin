@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { formatNumber } from '@/lib/utils';
 
 import {
   Card,
@@ -69,7 +70,7 @@ export function PairingPerHourBarGraph({ data, title, description }: BarGraphPro
             {description}
           </CardDescription>
           {/* Add the total count of pairings */}
-          <div className="text-lg font-semibold text-gray-700">{`סך הכל צימודים: ${total.hourly_count}`}</div>
+          <div className="text-lg font-semibold text-gray-700">{`סך הכל צימודים: ${formatNumber(total.hourly_count)}`}</div>
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
@@ -123,7 +124,7 @@ export function PairingPerHourBarGraph({ data, title, description }: BarGraphPro
                   formatter={(value, name, props) => {
                     const hourlyCount = props.payload.hourly_count;
                     const cumulativeCount = props.payload.cumulative_count;
-                    return `צימודים לשעה: ${hourlyCount}\r\nסך הכל צימודים עד עכשיו: ${cumulativeCount}`;
+                    return `צימודים לשעה: ${hourlyCount}\r\nסך הכל צימודים עד עכשיו: ${formatNumber(cumulativeCount)}`;
                   }}
                 />
               }

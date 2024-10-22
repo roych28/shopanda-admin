@@ -2,6 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatNumber } from '@/lib/utils';
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -31,7 +32,7 @@ export const columns: ColumnDef<any>[] = [
     header: 'סכום',
     cell: ({ row }) => (
       <div className="text-right text-xs text-gray-400">
-        ₪{row.original.amount}
+        ₪{formatNumber(row.original.amount)}
       </div>
     ),
   },
@@ -44,7 +45,7 @@ export const columns: ColumnDef<any>[] = [
       </div>
     ),
   },
-  {
+  /*{
     accessorKey: 'vendorId',
     header: 'מזהה ספק',
     cell: ({ row }) => (
@@ -52,5 +53,5 @@ export const columns: ColumnDef<any>[] = [
         {row.original.vendorId}
       </div>
     ),
-  },
+  },*/
 ];

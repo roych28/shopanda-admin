@@ -54,7 +54,7 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
               <div className={`flex ${isRTL() ? 'flex-row-reverse' : 'flex-row'} items-center text-right`}>
                 <div className="flex-1">
                   <div className="text-lg text-right">{vendor.vendor_name}</div>
-                  <div className="">{`${vendor.transaction_count} הכנסה כוללת ${vendor.total_revenue} עסקאות`}</div>
+                  <div className="">{`${formatNumber(vendor.transaction_count)} הכנסה כוללת ${formatNumber(vendor.total_revenue)} עסקאות`}</div>
                 </div>
                 <ArrowLeftIcon className="ml-2 h-4 w-4" aria-hidden="true" />
               </div>

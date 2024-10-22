@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Customer } from '@/constants/data';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatNumber } from '@/lib/utils';
 
 export const columns: ColumnDef<Customer>[] = [
   {
@@ -42,7 +43,7 @@ export const columns: ColumnDef<Customer>[] = [
           className="rounded-full"
         />
         <span className="truncate font-semibold text-gray-800 ml-1">
-          {row.original.totalAmountSpent}
+          {formatNumber(row.original.totalAmountSpent)}
         </span>
       </div>
     ),
