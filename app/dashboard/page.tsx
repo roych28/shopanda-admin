@@ -127,6 +127,7 @@ export default function DashboardPage() {
       let totalPosDepositAmount = 0;
       let totalAmount = 0;
       let totalCredits = 1;
+      let totalBonus = 0;
 
       const fromDate = selectedDateRange.from?.toLocaleDateString('en-CA');
       const toDate = selectedDateRange.to?.toLocaleDateString('en-CA');
@@ -151,12 +152,8 @@ export default function DashboardPage() {
         const totalDepositBonus = parseFloat(deposits[0].total_bonus);
         const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
         const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
-        const totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
-        
-        totalCredits = totalAmount + totalBonus;
-        console.log(totalAmount, totalCredits);
+        totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
 
-        setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(2));
 
         const chartData = [
           { type: 'Deposit', displayName: t('siteIncome'), total_amount: totalDepositAmount, fill: '#49E6A1' },
@@ -171,6 +168,10 @@ export default function DashboardPage() {
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
+      totalCredits = totalPurchase + totalBonus;
+      console.log(totalPurchase, totalCredits);
+
+      setCreditsToRealMoney(parseFloat(totalPurchase / totalCredits).toFixed(3));
       if(!vendorIdFinal) {
         setRealMoneyReport({
           totalDepositAmount,
