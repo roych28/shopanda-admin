@@ -30,5 +30,6 @@
   "cacheOrBit":"מזומן או ביט",
   "posDeposit":"הפקדה בקופה",
   "creditsNotSpent":"קרדיטים שלא נוצלו",
-  "version":"גרסה"
+  "version":"גרסה",
+  "return": "חזור"
 }

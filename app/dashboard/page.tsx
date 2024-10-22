@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react';
 import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import { DateRange } from 'react-day-picker';
 import PageContainer from '@/components/layout/page-container';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDataContext } from '@/lib/DataProvider';
 import { useTranslations } from 'next-intl';
 
@@ -121,7 +120,6 @@ export default function DashboardPage() {
     },
   ]);
   
-
   useEffect(() => {
     const fetchAllReports = async () => {
       let totalDepositAmount =0;
@@ -167,7 +165,7 @@ export default function DashboardPage() {
         ];
 
         setDepositReportForPie(chartData);
-      } //end of ower priviliges
+      }
 
       const customersRes = await fetchReports('get-customer-data', vendorIdFinal, fromDate, toDate);
       setCustomersData(customersRes);
@@ -223,7 +221,7 @@ export default function DashboardPage() {
       router.push('/');
     }
     
-  }, [loading, posUser, selectedDateRange, searchParams]);
+  }, [loading, posUser, selectedDateRange, searchParams, router, t]);
 
   const isSuperAdmin = (user) => {
     return user?.role === 'owner' || user?.role === 'super_admin';
@@ -253,11 +251,11 @@ export default function DashboardPage() {
             }}/> 
           </div>
         </div>
-        <Tabs defaultValue="overview" className="space-y-4">
+        <div className="space-y-4">
           {/*<TabsList>
             <TabsTrigger value="overview"></TabsTrigger>
           </TabsList>*/}
-          <TabsContent value="overview" className="space-y-4">
+          <div className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
               {/* Total Deposits */}
               {isSuperAdmin(posUser) && realMoneyReport && !vendorId && 
@@ -402,7 +400,7 @@ export default function DashboardPage() {
                 {salesDataPerHour && <SalesBarGraph
                               data={salesDataPerHour}
                               title="גרף מכירות לפי שעה"
-                              description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
+                              // description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
                             />}
               </div>
               {/* Sales By Vendor Graph */}
@@ -418,9 +416,8 @@ export default function DashboardPage() {
                 {customersData?.lastPurchases && <PurchaseHistory data={customersData.lastPurchases} />}
               </div>
             </div>
-          </TabsContent>
-        </Tabs>
-      
+          </div>
+        </div>
     </PageContainer>
   );
 }

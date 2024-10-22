@@ -1,4 +1,5 @@
 'use client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +19,8 @@ import { useTranslations } from 'next-intl';
 export function UserNav() {
   const { posUser, signOut } = useDataContext();
   const t = useTranslations();
-  console.log('posUser', posUser);
+  const router = useRouter();
+
   if (posUser) {
     return (
       <DropdownMenu>
@@ -60,11 +62,20 @@ export function UserNav() {
             </DropdownMenuItem>*/}
             <DropdownMenuItem>{t('version')} {process.env.NEXT_PUBLIC_APP_VERSION}</DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => signOut()}>
-            Log out
+          <DropdownMenuItem onClick={() => router.push('/terms')}>
+            תנאי השימוש
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/privacy')}>
+            מדיניות פרטיות
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => signOut()}>
+            התנתקות
+            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     );

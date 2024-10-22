@@ -30,5 +30,6 @@
   "cacheOrBit": "Cash Or Bit",
   "posDeposit": "POS Deposit",
   "creditsNotSpent": "Credits Not Spent",
-  "version": "Version"
+  "version": "Version",
+  "return": "Return"
 }
