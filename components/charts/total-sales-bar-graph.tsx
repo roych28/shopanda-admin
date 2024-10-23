@@ -73,25 +73,27 @@ export function TotalSalesGraph({ data }: TotalSalesGraphProps) {
         </div>
       </CardHeader>
       <CardContent className="px-2">
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              fill="#8884d8"
-              label
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value: number) => `₪${value.toFixed(2)}`} />
-          </PieChart>
-        </ResponsiveContainer>
+        <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+          <ResponsiveContainer>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
+                label
+              >
+                {pieData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value: number) => `₪${value.toFixed(2)}`} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

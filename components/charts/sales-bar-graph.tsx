@@ -54,96 +54,98 @@ export function SalesBarGraph({ data, title, description }: SalesBarGraphProps) 
           config={chartConfig}
           className="aspect-auto h-[300px] w-full sm:h-[400px]"
         >
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={data}
-              margin={{
-                left: 0,
-                right: 0,
-                top: 20,
-                bottom: 20
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="hour"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-                tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return date.toLocaleTimeString('he-IL', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                    timeZone: 'Asia/Jerusalem'
-                  });
+          <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+            <ResponsiveContainer>
+              <BarChart
+                data={data}
+                margin={{
+                  left: 0,
+                  right: 0,
+                  top: 20,
+                  bottom: 20
                 }}
-              />
-              <YAxis />
-              <Tooltip
-                formatter={(value, name, props) => {
-                  const vendorId = props.dataKey.split('_')[1];
-                  const vendorConfig = chartConfig[vendorId];
-
-                  // Skip showing tooltip if revenue is 0
-                  if (value === 0) return null;
-
-                  return `עסקאות: ${value}`;
-                }}
-                content={({ payload, label }) => {
-                  if (!payload || payload.length === 0) return null;
-
-                  const date = new Date(label);
-                  const formattedDate = date.toLocaleDateString('he-IL', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false,
-                    timeZone: 'Asia/Jerusalem',
-                  });
-
-                  return (
-                    <div className="bg-white p-3 rounded shadow-md text-right">
-                      {/* Date Title */}
-                      <div className="font-semibold mb-2">{formattedDate}</div>
-                      {/* Transaction Details */}
-                      {payload.map((item, index) => {
-                        const vendorId = item.dataKey.split('_')[1];
-                        const vendorConfig = chartConfig[vendorId];
-                        const vendorColor = vendorConfig.color;
-
-                        return (
-                          <div key={index} className="flex items-center justify-end">
-                            <span>{`עסקאות: ${item.value}`}</span>
-                            <div
-                              className="inline-block w-3 h-3 ml-2"
-                              style={{ backgroundColor: vendorColor }}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                }}
-              />
-              <Legend
-                formatter={(value) => chartConfig[value]?.label || value}
-              />
-              {Object.keys(chartConfig).map((vendorId) => (
-                <Bar
-                  key={vendorId}
-                  dataKey={`vendor_${vendorId}_count`}
-                  fill={chartConfig[vendorId].color}
-                  name={vendorId}
-                  barSize={30}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey="hour"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  minTickGap={32}
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    return date.toLocaleTimeString('he-IL', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                      timeZone: 'Asia/Jerusalem'
+                    });
+                  }}
                 />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+                <YAxis />
+                <Tooltip
+                  formatter={(value, name, props) => {
+                    const vendorId = props.dataKey.split('_')[1];
+                    const vendorConfig = chartConfig[vendorId];
+
+                    // Skip showing tooltip if revenue is 0
+                    if (value === 0) return null;
+
+                    return `עסקאות: ${value}`;
+                  }}
+                  content={({ payload, label }) => {
+                    if (!payload || payload.length === 0) return null;
+
+                    const date = new Date(label);
+                    const formattedDate = date.toLocaleDateString('he-IL', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false,
+                      timeZone: 'Asia/Jerusalem',
+                    });
+
+                    return (
+                      <div className="bg-white p-3 rounded shadow-md text-right">
+                        {/* Date Title */}
+                        <div className="font-semibold mb-2">{formattedDate}</div>
+                        {/* Transaction Details */}
+                        {payload.map((item, index) => {
+                          const vendorId = item.dataKey.split('_')[1];
+                          const vendorConfig = chartConfig[vendorId];
+                          const vendorColor = vendorConfig.color;
+
+                          return (
+                            <div key={index} className="flex items-center justify-end">
+                              <span>{`עסקאות: ${item.value}`}</span>
+                              <div
+                                className="inline-block w-3 h-3 ml-2"
+                                style={{ backgroundColor: vendorColor }}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  }}
+                />
+                <Legend
+                  formatter={(value) => chartConfig[value]?.label || value}
+                />
+                {Object.keys(chartConfig).map((vendorId) => (
+                  <Bar
+                    key={vendorId}
+                    dataKey={`vendor_${vendorId}_count`}
+                    fill={chartConfig[vendorId].color}
+                    name={vendorId}
+                    barSize={30}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </ChartContainer>
       </CardContent>
     </Card>

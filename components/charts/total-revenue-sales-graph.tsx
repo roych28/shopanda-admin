@@ -100,7 +100,8 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
       </CardHeader>
       <CardContent className="px-2">
         <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full sm:h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+        <ResponsiveContainer>
             <LineChart
               data={processedData}
               margin={{
@@ -202,6 +203,7 @@ export function RevenueLineGraph({ data, title, description }: RevenueLineGraphP
               />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </ChartContainer>
       </CardContent>
       <CardFooter>

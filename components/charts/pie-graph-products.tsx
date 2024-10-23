@@ -88,32 +88,34 @@ export function ProductPieCharts({ data }: ProductPieChartProps) {
           </div>
         </CardHeader>
         <CardContent className="px-2">
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="60%"
-                cy="50%"
-                outerRadius={120}
-                label={({ cx, cy, midAngle, outerRadius, name, value, fill }) => {
-                  const RADIAN = Math.PI / 180;
-                  const radius = outerRadius + 40;
-                  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-                  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+          <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="60%"
+                  cy="50%"
+                  outerRadius={120}
+                  label={({ cx, cy, midAngle, outerRadius, name, value, fill }) => {
+                    const RADIAN = Math.PI / 180;
+                    const radius = outerRadius + 40;
+                    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                    const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                  return <CustomLabel x={x} y={y} name={name} value={value} fill={fill} midAngle={midAngle} />;
-                }}
-                labelLine={CustomLabelLine}
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value: number) => `כמות: ${value}`} />
-            </PieChart>
-          </ResponsiveContainer>
+                    return <CustomLabel x={x} y={y} name={name} value={value} fill={fill} midAngle={midAngle} />;
+                  }}
+                  labelLine={CustomLabelLine}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: number) => `כמות: ${value}`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
     );

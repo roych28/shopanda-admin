@@ -86,7 +86,8 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
       </CardHeader>
       <CardContent className="px-2">
         <div className="pb-6"> {description} </div>
-        <ResponsiveContainer width="100%" height={300}>
+        <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+          <ResponsiveContainer>
           <BarChart data={barData}>
             <XAxis dataKey="name" />
             <YAxis />
@@ -100,6 +101,7 @@ export function SalesByVendorGraph({ data }: TotalSalesGraphProps) {
             <Bar dataKey="tip" stackId="a" name="טיפים" fill="#FFD700" />
           </BarChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

@@ -86,45 +86,47 @@ export function ProductSalesByHour({ data }: ProductSalesByHourProps) {
         </div>
       </CardHeader>
       <CardContent className="px-2">
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart
-            data={chartData}
-            margin={{
-              left: 10,
-              right: 10,
-              top: 20,
-              bottom: 20,
-            }}
-            barSize={30} // Increase the bar size to take up more width
-            barCategoryGap="5%" // Reduce the gap between bar categories
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="hour"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleTimeString('he-IL', {
-                  hour: '2-digit',
-                  hour12: false,
-                  timeZone: 'Asia/Jerusalem',
-                });
+        <div style={{ width: '100%', height: 'auto', aspectRatio: '4 / 3' }}>
+          <ResponsiveContainer>
+            <BarChart
+              data={chartData}
+              margin={{
+                left: 10,
+                right: 10,
+                top: 20,
+                bottom: 20,
               }}
-            />
-            <YAxis />
-            <Tooltip />
-            {/* Render only selected product bars, and ensure the color is mapped consistently */}
-            {(selectedProducts.length ? selectedProducts : uniqueProducts).map((product) => (
-              <Bar
-                key={product}
-                dataKey={product}
-                fill={getProductColor(product)}
+              barSize={30} // Increase the bar size to take up more width
+              barCategoryGap="5%" // Reduce the gap between bar categories
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="hour"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return date.toLocaleTimeString('he-IL', {
+                    hour: '2-digit',
+                    hour12: false,
+                    timeZone: 'Asia/Jerusalem',
+                  });
+                }}
               />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+              <YAxis />
+              <Tooltip />
+              {/* Render only selected product bars, and ensure the color is mapped consistently */}
+              {(selectedProducts.length ? selectedProducts : uniqueProducts).map((product) => (
+                <Bar
+                  key={product}
+                  dataKey={product}
+                  fill={getProductColor(product)}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );

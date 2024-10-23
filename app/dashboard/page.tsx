@@ -142,18 +142,25 @@ export default function DashboardPage() {
       console.log('Vendor ID:', vendorIdFinal);
       if(!vendorIdFinal) {
         const deposits = await fetchReports('deposits', undefined, fromDate, toDate);
-        // real money 
-        totalDepositAmount = parseFloat(deposits[0].total_amount);
-        totalWithoutPaymentAmount = parseFloat(deposits[1].total_amount);
-        totalPosDepositAmount = parseFloat(deposits[3].total_amount);
+        
+        // Function to get data by type
+        const getAmountByType = (type, key = 'total_amount') => {
+          const item = deposits.find(deposit => deposit.type === type);
+          return item ? parseFloat(item[key]) : 0;
+        };
+
+        // Get amounts by type
+        totalDepositAmount = getAmountByType('deposit');
+        totalWithoutPaymentAmount = getAmountByType('without_payment');
+        totalPosDepositAmount = getAmountByType('direct_payment');
         totalAmount = totalDepositAmount + totalWithoutPaymentAmount + totalPosDepositAmount;
-
-        // bonus
-        const totalDepositBonus = parseFloat(deposits[0].total_bonus);
-        const totalWithoutPaymentBonus = parseFloat(deposits[1].total_bonus);
-        const totalPosDepositBonus = parseFloat(deposits[3].total_bonus);
+        console.log(`totalDeposit ${totalDepositAmount}, totalWithoutPayment ${totalWithoutPaymentAmount}, totalPosDeposit ${totalPosDepositAmount}, totalAmount ${totalAmount}`);
+        
+        const totalDepositBonus = getAmountByType('deposit', 'total_bonus');
+        const totalWithoutPaymentBonus = getAmountByType('without_payment', 'total_bonus');
+        const totalPosDepositBonus = getAmountByType('direct_payment', 'total_bonus');
         totalBonus = totalDepositBonus + totalWithoutPaymentBonus + totalPosDepositBonus;
-
+        console.log(`totalDepositBonus ${totalDepositBonus}, totalWithoutPaymentBonus ${totalWithoutPaymentBonus}, totalPosDepositBonus ${totalPosDepositBonus}, totalBonus ${totalBonus}`);
 
         const chartData = [
           { type: 'Deposit', displayName: t('siteIncome'), total_amount: totalDepositAmount, fill: '#49E6A1' },
@@ -169,7 +176,7 @@ export default function DashboardPage() {
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
       totalCredits = totalPurchase + totalBonus;
-      console.log(totalPurchase, totalCredits);
+      console.log(`Total Purchase: ${totalPurchase}, Total Credits: ${totalCredits}`);
 
       setCreditsToRealMoney(parseFloat(totalPurchase / totalCredits).toFixed(3));
       if(!vendorIdFinal) {
@@ -401,7 +408,7 @@ export default function DashboardPage() {
                 {salesDataPerHour && <SalesBarGraph
                               data={salesDataPerHour}
                               title="גרף מכירות לפי שעה"
-                              // description="השוואת מספר העסקאות לפי שעה בין הספקים שונים"
+                              description="מספר העסקאות לפי שעה"
                             />}
               </div>
               {/* Sales By Vendor Graph */}
