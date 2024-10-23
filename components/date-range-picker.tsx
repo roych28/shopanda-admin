@@ -21,7 +21,7 @@ export function CalendarDateRangePicker({
 }: CalendarDateRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2024, 8, 26),
-    to: addDays(new Date(2024, 8, 26), 3)
+    to: addDays(new Date(2024, 8, 26), 2)
   });
 
   // Handle date change and trigger the callback
