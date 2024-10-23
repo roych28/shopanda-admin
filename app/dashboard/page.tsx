@@ -175,10 +175,10 @@ export default function DashboardPage() {
       setCustomersData(customersRes);
 
       const totalPurchase = customersRes.totalSalesSummery.reduce((acc, curr) => acc + parseFloat(curr.total_revenue), 0);
-      totalCredits = totalPurchase + totalBonus;
+      totalCredits = totalAmount + totalBonus;
       console.log(`Total Purchase: ${totalPurchase}, Total Credits: ${totalCredits}`);
 
-      setCreditsToRealMoney(parseFloat(totalPurchase / totalCredits).toFixed(3));
+      setCreditsToRealMoney(parseFloat(totalAmount / totalCredits).toFixed(3));
       if(!vendorIdFinal) {
         setRealMoneyReport({
           totalDepositAmount,

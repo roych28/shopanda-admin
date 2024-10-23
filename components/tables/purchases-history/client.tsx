@@ -12,7 +12,7 @@ export const PurchaseHistory: React.FC<ChargesTableProps> = ({ data }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-right">היסטוריית עסקאות</CardTitle>
+        <CardTitle className="text-right">עסקאות אחרונות</CardTitle>
       </CardHeader>
       <CardContent>
         <DataTable searchKey="customerName" columns={columns} data={data} />
