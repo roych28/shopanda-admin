@@ -12,7 +12,7 @@ import * as React from 'react';
 import { DateRange } from 'react-day-picker';
 
 interface CalendarDateRangePickerProps extends React.HTMLAttributes<HTMLDivElement> {
-  onDateChange?: (range: DateRange | undefined) => void; // Add this prop
+  onDateChange?: (range: DateRange | undefined) => void;
 }
 
 export function CalendarDateRangePicker({
@@ -28,7 +28,7 @@ export function CalendarDateRangePicker({
   const handleDateChange = (range: DateRange | undefined) => {
     setDate(range);
     if (onDateChange) {
-      onDateChange(range); // Call the parent-provided function
+      onDateChange(range);
     }
   };
 

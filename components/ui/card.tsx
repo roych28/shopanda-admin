@@ -26,7 +26,7 @@ const CardHeader = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'flex flex-col space-y-1.5 p-6',
+      'flex flex-col space-y-1.5 p-2',
       isRTL() ? 'text-right' : 'text-left',
       className
     )}
@@ -73,7 +73,7 @@ const CardContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('p-6 pt-0', isRTL() ? 'text-right' : 'text-left', className)}
+    className={cn('p-2 pt-0', isRTL() ? 'text-right' : 'text-left', className)}
     {...props}
   />
 ));
@@ -86,7 +86,7 @@ const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'flex items-center p-6 pt-0',
+      'flex items-center p-2 pt-0',
       isRTL() ? 'justify-end' : 'justify-start',
       className
     )}
